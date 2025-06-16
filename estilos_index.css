@@ -1,0 +1,241 @@
+/* Tourism Theme Colors */
+:root {
+    --primary-blue: #1e88e5;
+    --ocean-blue: #039be5;
+    --sand-color: #ffd54f;
+    --forest-green: #43a047;
+    --mountain-gray: #78909c;
+    --white: #ffffff;
+    --text-dark: #333333;
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--forest-green) 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Header Styles */
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.inicio {
+     padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.inicio:hover{
+    border: #ffd54f;
+    background-color: #78909c;
+    color: #333333;
+     transform: translateY(-5px);
+}
+
+/* Animated Search Bar */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.search-bar {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    transition: all 0.5s ease;
+}
+
+.search-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--white);
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: 2px solid var(--primary-blue);
+    outline: none;
+    font-size: 16px;
+    transition: all 0.5s ease;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.search-btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 50px;
+    background: var(--primary-blue);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.search-btn::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 15px;
+    border: 3px solid var(--white);
+    border-radius: 50%;
+}
+
+.search-btn::after {
+    content: "";
+    position: absolute;
+    bottom: 15px;
+    right: 12px;
+    width: 3px;
+    height: 8px;
+    background: var(--white);
+    transform: rotate(45deg);
+}
+
+/* Search Bar Animation */
+.search-bar:hover,
+.search-bar:focus-within {
+    width: 300px;
+}
+
+.search-bar:hover .search-input,
+.search-bar:focus-within .search-input {
+    opacity: 1;
+    cursor: text;
+    padding-left: 60px;
+}
+
+.search-bar:hover .search-btn,
+.search-bar:focus-within .search-btn {
+    background: var(--primary-blue);
+    transform: scale(0.9);
+}
+
+/* Tourism Cards */
+.destination-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    background: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-title {
+    color: var(--text-dark);
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    color: var(--mountain-gray);
+    line-height: 1.6;
+}
+
+/* Tourism Navigation */
+.nav-menu {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.link {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    margin: 10px 0;
+    margin-top: 5px;
+    border-radius: 12px;
+    margin-left: 5px;
+    margin-right: 5px;
+    gap: 10px;
+
+}
+
+.nav-item {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .search-bar:hover,
+    .search-bar:focus-within {
+        width: 200px;
+    }
+
+    .nav-menu {
+        flex-wrap: wrap;
+    }
+
+    .card {
+        margin: 10px;
+    }
+}
+
+/* Loading Animation */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.loading {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.playa {
+    display: inline-block;
+}
