@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Turismo</title>
+    <link rel="stylesheet" href="css/estilos galeria.css">
+</head>
+<body>
+    <button>
+        <a href="http://127.0.0.1:5500/index%202.html" class="inicio">Inicio</a>
+    </button>
+    <div class="galeria-turismo">
+        <h1 class="galeria-titulo">Destinos Turísticos</h1>
+        
+        <!-- Grid Gallery -->
+        <div class="galeria-grid">
+            <!-- Image 1 -->
+            <div class="imagen-container">
+                <img src="img/Fortuna/Rio Celeste.jpeg" alt="Destino 1" class="imagen-turismo">
+                <div class="imagen-overlay">
+                    <h3 class="overlay-titulo">Catarata la fortuna</h3>
+                    <p class="overlay-descripcion">Disfruta de las aguas cristalinas y un bune rato.</p>
+                </div>
+                <div class="animacion-indicador">+</div>
+            </div>
+            
+            <!-- Image 2 -->
+            <div class="imagen-container">
+                <img src="img/Fortuna/Puentes Mistico Park.jpeg" alt="Destino 2" class="imagen-turismo">
+                <div class="imagen-overlay">
+                    <h3 class="overlay-titulo">puenters colgantes mistico Park</h3>
+                    <p class="overlay-descripcion">Explora paisajes montañosos impresionantes.</p>
+                </div>
+                <div class="animacion-indicador">+</div>
+            </div>
+            
+            <!-- Image 3 -->
+            <div class="imagen-container">
+                <img src="img/Fortuna/the-main-falls.jpg" alt="Destino 3" class="imagen-turismo">
+                <div class="imagen-overlay">
+                    <h3 class="overlay-titulo">the main falls</h3>
+                    <p class="overlay-descripcion">Descubre la arquitectura antigua y cultura local.</p>
+                </div>
+                <div class="animacion-indicador">+</div>
+            </div>
+        </div>
+
+        <!-- Carousel Gallery -->
+        <div class="galeria-carrusel">
+            <div class="carrusel-container">
+                <div class="carrusel-slide">
+                    <img src="img/Guanacaste/golfo papagayo.jpg" alt="Carrusel 1" class="carrusel-imagen">
+                </div>
+                <div class="carrusel-slide">
+                    <img src="img/Guanacaste/playa del coco.jpeg" alt="Carrusel 2" class="carrusel-imagen">
+                </div>
+                <div class="carrusel-slide">
+                    <img src="img/Guanacaste/playa virador.jpeg" alt="Carrusel 3" class="carrusel-imagen">
+                </div>
+            </div>
+            <button class="carrusel-control carrusel-prev"><</button>
+            <button class="carrusel-control carrusel-next">></button>
+            <div class="carrusel-indicadores">
+                <span class="indicador activo"></span>
+                <span class="indicador"></span>
+                <span class="indicador"></span>
+            </div>
+        </div>
+
+        <!-- Mosaic Gallery -->
+        <div class="galeria-mosaico">
+            <div class="mosaico-item">
+                <img src="img/Fortuna/Cerro Chato.jpeg" alt="Mosaico 1" class="mosaico-imagen">
+            </div>
+            <div class="mosaico-item">
+                <img src="img/Fortuna/pacos-horses.jpg" alt="Mosaico 2" class="mosaico-imagen">
+            </div>
+            <div class="mosaico-item">
+                <img src="img/Fortuna/parque-nacional-volcan-arenal-alajuela.webp" alt="Mosaico 3" class="mosaico-imagen">
+            </div>
+            <div class="mosaico-item">
+                <img src="img/Guanacaste/Playa-Cabuyal.webp" alt="Mosaico 4" class="mosaico-imagen">
+            </div>
+            <div class="mosaico-item">
+                <img src="img/Guanacaste/playa coyote.jpeg" alt="Mosaico 5" class="mosaico-imagen">
+            </div>
+            <div class="mosaico-item">
+                <img src="img/ecotermales-fortuna.jpg" alt="Mosaico 6" class="mosaico-imagen">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple carousel functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const carrusel = document.querySelector('.carrusel-container');
+            const slides = document.querySelectorAll('.carrusel-slide');
+            const prevBtn = document.querySelector('.carrusel-prev');
+            const nextBtn = document.querySelector('.carrusel-next');
+            const indicators = document.querySelectorAll('.indicador');
+            let currentSlide = 0;
+
+            function updateCarousel() {
+                carrusel.style.transform = `translateX(-${currentSlide * 100}%)`;
+                indicators.forEach((ind, i) => {
+                    ind.classList.toggle('activo', i === currentSlide);
+                });
+            }
+
+            prevBtn.addEventListener('click', () => {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                updateCarousel();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                updateCarousel();
+            });
+
+            indicators.forEach((ind, i) => {
+                ind.addEventListener('click', () => {
+                    currentSlide = i;
+                    updateCarousel();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

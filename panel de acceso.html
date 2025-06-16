@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panel de Registro e Inicio de Sesión con Botón</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+    overflow: hidden;
+  }
+  #openPanelBtn {
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background: #764ba2;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+    position: relative;
+  }
+  #openPanelBtn:hover {
+    background: #5a357e;
+  }
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9;
+  }
+  .container {
+    background: #fff;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90vw;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+  .tabs {
+    display: flex;
+  }
+  .tab {
+    flex: 1;
+    padding: 16px;
+    background: #f3f3f3;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  .tab.active {
+    background: #667eea;
+    color: white;
+    box-shadow: inset 0 -3px 0 #764ba2;
+  }
+  form {
+    padding: 24px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    border-color: #667eea;
+    outline: none;
+  }
+  button.submit-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background: #764ba2;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button.submit-btn:hover {
+    background: #5a357e;
+  }
+  .form-message {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: red;
+  }
+</style>
+</head>
+<body>
+  <button id="openPanelBtn" aria-expanded="false" aria-controls="authPanel">Abrir Panel de Acceso</button>
+
+  <div class="overlay" id="authPanel" role="dialog" aria-modal="true" aria-labelledby="authPanelTitle" tabindex="-1">
+    <div class="container" tabindex="0">
+      <div class="tabs" id="authPanelTitle">
+        <div class="tab active" id="tab-login" role="tab" aria-selected="true" tabindex="0" aria-controls="form-login">Iniciar Sesión</div>
+        <div class="tab" id="tab-register" role="tab" aria-selected="false" tabindex="-1" aria-controls="form-register">Registrarse</div>
+      </div>
+      <form id="form-login" autocomplete="off" role="tabpanel" aria-hidden="false">
+        <label for="login-email">Correo electrónico</label>
+        <input type="email" id="login-email" name="login-email" required placeholder="tucorreo@ejemplo.com" />
+        <label for="login-password">Contraseña</label>
+        <input type="password" id="login-password" name="login-password" required placeholder="Contraseña" minlength="6" />
+        <button type="submit" class="submit-btn">Entrar</button>
+        <div class="form-message" id="login-message"></div>
+      </form>
+      <form id="form-register" style="display:none;" autocomplete="off" role="tabpanel" aria-hidden="true">
+        <label for="register-name">Nombre completo</label>
+        <input type="text" id="register-name" name="register-name" required placeholder="Tu nombre completo" />
+        <label for="register-email">Correo electrónico</label>
+        <input type="email" id="register-email" name="register-email" required placeholder="tucorreo@ejemplo.com" />
+        <label for="register-password">Contraseña</label>
+        <input type="password" id="register-password" name="register-password" required placeholder="Contraseña" minlength="6" />
+        <label for="register-confirm-password">Confirmar contraseña</label>
+        <input type="password" id="register-confirm-password" name="register-confirm-password" required placeholder="Confirma tu contraseña" minlength="6" />
+        <button type="submit" class="submit-btn">Registrarse</button>
+        <div class="form-message" id="register-message"></div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const openPanelBtn = document.getElementById('openPanelBtn');
+  const overlay = document.getElementById('authPanel');
+  const tabLogin = document.getElementById('tab-login');
+  const tabRegister = document.getElementById('tab-register');
+  const formLogin = document.getElementById('form-login');
+  const formRegister = document.getElementById('form-register');
+  const loginMessage = document.getElementById('login-message');
+  const registerMessage = document.getElementById('register-message');
+
+  openPanelBtn.addEventListener('click', () => {
+    const expanded = openPanelBtn.getAttribute('aria-expanded') === 'true';
+    if (expanded) {
+      closePanel();
+    } else {
+      openPanel();
+    }
+  });
+
+  function openPanel() {
+    overlay.style.display = 'flex';
+    openPanelBtn.setAttribute('aria-expanded', 'true');
+    // Focus first tab
+    tabLogin.focus();
+    document.body.style.overflow = 'hidden'; // prevent background scroll
+  }
+
+  function closePanel() {
+    overlay.style.display = 'none';
+    openPanelBtn.setAttribute('aria-expanded', 'false');
+    openPanelBtn.focus();
+    document.body.style.overflow = ''; // restore scroll
+  }
+
+  // Close panel if clicking outside container
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      closePanel();
+    }
+  });
+
+  // Keyboard: closing on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape" && overlay.style.display === 'flex') {
+      closePanel();
+    }
+  });
+
+  tabLogin.addEventListener('click', () => {
+    selectTab('login');
+  });
+
+  tabRegister.addEventListener('click', () => {
+    selectTab('register');
+  });
+
+  function selectTab(tab) {
+    clearMessages();
+    if (tab === 'login') {
+      tabLogin.classList.add('active');
+      tabLogin.setAttribute('aria-selected', 'true');
+      tabLogin.tabIndex = 0;
+      tabRegister.classList.remove('active');
+      tabRegister.setAttribute('aria-selected', 'false');
+      tabRegister.tabIndex = -1;
+
+      formLogin.style.display = 'block';
+      formLogin.setAttribute('aria-hidden', 'false');
+      formRegister.style.display = 'none';
+      formRegister.setAttribute('aria-hidden', 'true');
+      formLogin.querySelector('input').focus();
+    } else {
+      tabRegister.classList.add('active');
+      tabRegister.setAttribute('aria-selected', 'true');
+      tabRegister.tabIndex = 0;
+      tabLogin.classList.remove('active');
+      tabLogin.setAttribute('aria-selected', 'false');
+      tabLogin.tabIndex = -1;
+
+      formRegister.style.display = 'block';
+      formRegister.setAttribute('aria-hidden', 'false');
+      formLogin.style.display = 'none';
+      formLogin.setAttribute('aria-hidden', 'true');
+      formRegister.querySelector('input').focus();
+    }
+  }
+
+  function clearMessages() {
+    loginMessage.textContent = '';
+    loginMessage.style.color = 'red';
+    registerMessage.textContent = '';
+    registerMessage.style.color = 'red';
+  }
+
+  formLogin.addEventListener('submit', e => {
+    e.preventDefault();
+    clearMessages();
+
+    const email = formLogin['login-email'].value.trim();
+    const password = formLogin['login-password'].value;
+
+    if (!email || !password) {
+      loginMessage.textContent = 'Por favor, completa todos los campos.';
+      return;
+    }
+
+    loginMessage.style.color = 'green';
+    loginMessage.textContent = '¡Inicio de sesión exitoso! (simulado)';
+  });
+
+  formRegister.addEventListener('submit', e => {
+    e.preventDefault();
+    clearMessages();
+
+    const name = formRegister['register-name'].value.trim();
+    const email = formRegister['register-email'].value.trim();
+    const password = formRegister['register-password'].value;
+    const confirmPassword = formRegister['register-confirm-password'].value;
+
+    if (!name || !email || !password || !confirmPassword) {
+      registerMessage.textContent = 'Por favor, completa todos los campos.';
+      return;
+    }
+    if (password.length < 6) {
+      registerMessage.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+      return;
+    }
+    if (password !== confirmPassword) {
+      registerMessage.textContent = 'Las contraseñas no coinciden.';
+      return;
+    }
+
+    registerMessage.style.color = 'green';
+    registerMessage.textContent = '¡Registro exitoso! (simulado)';
+    formRegister.reset();
+  });
+</script>
+</body>
+</html>
