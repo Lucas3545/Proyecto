@@ -4,29 +4,43 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Panel de Registro e Inicio de Sesión con Botón</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+</head>
+<body>
+        <details>
+    <summary>&#9776;</summary>
+       <li><a href="http://localhost:63342/Proyecto/index.html" class="nav-item" title="Inicio">⏪Inicio</a></li>
+        <li><a href="http://localhost:63342/Proyecto/informaci%C3%B3n.html?_ijt=ael9v3sj82lng3ku64h3pa9r5q&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="Información">🗄️Información</a></li>
+    <li><a href="http://localhost:63342/Proyecto/galeria.html?_ijt=bl5hgrs3gi2m0pctmminahaqs8&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="Galeria">🖼️Galeria</a></li>
+    <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">📧gmail</a></li>
+        <li><a href="tel:+50683256836" class="nav-item" title="Contacto">📞Contacto</a></li>
+        <li><a href="http://localhost:63342/Proyecto/Terminos_y_condiciones.html?_ijt=234h3eno0g6icvquo8a7icf1pg&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="Terminos y Condiciones">📝Terminos y condiciones</a></li>
+</details>
+        <style>
+     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
   * {
     box-sizing: border-box;
   }
   body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #667eea, #4ba0a2);
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #333;
     overflow: hidden;
+    background-size: cover;
   }
   #openPanelBtn {
     padding: 14px 28px;
     font-size: 1.1rem;
     font-weight: 600;
     color: white;
-    background: #764ba2;
-    border: none;
+    background-image: url() rgb(255, 255, 255);
+    background-repeat: no-repeat;
+    border: none dotted 1.5px rgba(red, green, blue, alpha);
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -34,7 +48,8 @@
     position: relative;
   }
   #openPanelBtn:hover {
-    background: #5a357e;
+    background: #64a711;
+    border: dotted 2.5px rgba(red, green, blue, alpha);
   }
   .overlay {
     position: fixed;
@@ -102,15 +117,15 @@
     padding: 14px;
     font-size: 1.1rem;
     font-weight: 600;
-    color: white;
-    background: #764ba2;
+    color: rgb(red, green, blue);
+    background-color: rgba(red, green, blue, alpha);
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
   button.submit-btn:hover {
-    background: #5a357e;
+    background: #35737e;
   }
   .form-message {
     text-align: center;
@@ -118,10 +133,10 @@
     font-size: 0.9rem;
     color: red;
   }
+
+
 </style>
-</head>
-<body>
-  <button id="openPanelBtn" aria-expanded="false" aria-controls="authPanel">Abrir Panel de Acceso</button>
+  <button id="openPanelBtn" aria-expanded="false" aria-controls="authPanel" style="color: black;">Abrir Panel de Acceso</button>
 
   <div class="overlay" id="authPanel" role="dialog" aria-modal="true" aria-labelledby="authPanelTitle" tabindex="-1">
     <div class="container" tabindex="0">
