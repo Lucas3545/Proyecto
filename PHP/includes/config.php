@@ -8,4 +8,4 @@
     $DB_HOSTNAME="localhost";
     $DB_NAME = "lukes";
     $DB_USERNAME = "root";
-    $DB_PASSWORD = "";
+    $DB_PASSWORD = "root";
