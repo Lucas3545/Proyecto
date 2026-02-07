@@ -1,4 +1,4 @@
-/* Tourism Theme Colors */
+
 :root {
     --primary-blue: #1e88e5;
     --ocean-blue: #039be5;
@@ -9,7 +9,7 @@
     --text-dark: #333333;
 }
 
-/* Base Styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -21,9 +21,13 @@ body {
     background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--forest-green) 100%);
     min-height: 100vh;
     padding: 20px;
+    transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    transition: transform 0.5s ease-in-out;
+    transform-style: preserve-3d;
+    perspective: 1000px;
 }
 
-/* Header Styles */
+
 .header {
     background: rgba(255, 255, 255, 0.95);
     padding: 20px;
@@ -46,7 +50,7 @@ body {
      transform: translateY(-5px);
 }
 
-/* Animated Search Bar */
+
 .search-container {
     display: flex;
     justify-content: center;
@@ -83,7 +87,7 @@ body {
     left: 0;
     width: 50px;
     height: 50px;
-    background: var(--primary-blue);
+    background: linear-gradient(135deg, var(--primary-blue), var(--sand-color));
     border-radius: 50%;
     border: none;
     cursor: pointer;
@@ -100,6 +104,7 @@ body {
     height: 15px;
     border: 3px solid var(--white);
     border-radius: 50%;
+    background: transparent;
 }
 
 .search-btn::after {
@@ -113,7 +118,6 @@ body {
     transform: rotate(45deg);
 }
 
-/* Search Bar Animation */
 .search-bar:hover,
 .search-bar:focus-within {
     width: 300px;
@@ -132,7 +136,6 @@ body {
     transform: scale(0.9);
 }
 
-/* Tourism Cards */
 .destination-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -173,9 +176,6 @@ body {
     line-height: 1.6;
 }
 
-.nav-item {
-    padding: 10px 20px;
-    background:rgba(255, 255, 255, 0.9);
 .nav-menu {
     display: flex;
     justify-content: center;
@@ -196,7 +196,9 @@ body {
 
 }
 
-rgba(255, 255, 255, 0.9);
+.nav-item {
+    padding: 10px 20px;
+    background:linear-gradient(135deg, var(--primary-blue), var(--sand-color));
     border-radius: 25px;
     color: var(--text-dark);
     text-decoration: none;
@@ -204,12 +206,15 @@ rgba(255, 255, 255, 0.9);
 }
 
 .nav-item:hover {
-    background: var(--primary-blue);
-    color: var(--white);
+    background: -moz-linear-gradient(135deg, var(--primary-blue), var(--forest-green));
+    color: var(--primary-blue);
     transform: scale(1.05);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .search-bar:hover,
     .search-bar:focus-within {
@@ -225,7 +230,7 @@ rgba(255, 255, 255, 0.9);
     }
 }
 
-/* Loading Animation */
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
@@ -239,64 +244,185 @@ rgba(255, 255, 255, 0.9);
 .playa {
     display: inline-block;
 }
-.formulario {
-    background: #f8fafc;
-    border-radius: 10px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    padding: 32px 24px;
-    max-width: 400px;
-    margin: 32px auto;
+#footer-links {
     display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 50px 50px 50px 50px;
+
+text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+
+
+background: linear-gradient(to right, #1d3b77, #660754);
+-webkit-background-clip: text;
+background-clip: text;
+-webkit-text-fill-color: transparent;
+transform: rotate(3deg);
+
+}
+body {
+            background: linear-gradient(120deg, #a8dadc 0%, #f4a261 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+       #footer-links {
+            background-color: #264653;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(120deg, #264653, #2a9d8f);
+        }
+        #footer-links a {
+            color: #2a9d8f;
+            text-decoration: none;
+        }
+        #footer-links a:hover {
+            text-decoration: underline;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: linear-gradient(90deg, #00796b, #26a69a);
+  color: #fff;
+  font-family: 'Helvetica Neue', sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #ffe082;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
     flex-direction: column;
-    gap: 18px;
+    background: #004d40;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .nav-links li {
+    margin-bottom: 1rem;
+  }
 }
-.formulario label {
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #2d6a4f;
-}
-.formulario input[type="text"],
-.formulario input[type="email"],
-.formulario input[type="tel"],
-.formulario input[type="password"] {
-    padding: 10px;
-    border: 1px solid #b7e4c7;
-    border-radius: 6px;
-    font-size: 1em;
-    background: #fff;
-    transition: border 0.2s;
-}
-.formulario input:focus {
-    border: 1.5px solid #40916c;
-    outline: none;
-}
-.formulario input[type="submit"] {
-    background: #2d6a4f;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-.formulario input[type="submit"]:hover {
-    background: #40916c;
-}
-.formulario .radio-group {
+
+.info-section {
+    max-width: 1200px;
+    margin: 80px auto 0 auto;
     display: flex;
-    gap: 24px;
-    margin: 12px 0;
-}
-.formulario .radio-group label {
-    font-weight: 400;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-@media (max-width: 600px) {
-    .formulario {
-        padding: 20px 8px;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
     }
+.info-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+            width: 320px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .info-card:hover {
+            box-shadow: 0 12px 40px rgba(42,157,143,0.15);
+            transform: translateY(-4px) scale(1.03);
+        }
+        .info-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #264653;
+            margin-bottom: 12px;
+        }
+        .info-desc {
+            font-size: 1rem;
+            color: #457b9d;
+            opacity: 0.85;
+        }
+        .titulo {
+            font-weight: 600;
+            color: green;
+            font-size: 1.2rem;
+            border: 2px solid #2a9d8f;
+        }
+.btn-reserve {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-reserve:hover {
+  background-color: #45a049;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-reserve:active,
+.btn-reserve.btn-clicked {
+  transform: scale(0.96);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.navbar-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.navbar-link:hover {
+  color: #ffe082;
+}
+
+        .description {
+            font-size: 1rem;
+            color: #457b9d;
+            opacity: 0.85;
+        }
+/*area responsive para dispositivos moviles*/
+@media (max-width: 768px) {
+    .description {
+        font-size: 0.9rem;
+    }
+}
+.banner {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    overflow: hidden;
 }

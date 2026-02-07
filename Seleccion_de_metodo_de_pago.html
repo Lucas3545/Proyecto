@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/Seleccion_de_metodo_de_pago.css">
+    <link rel="icon" type="image/x-icon" href="./img/logo de luke's huse casa tranquila.webp">
+    <title>Metodo de Pago</title>
+</head>
+
+<body class="contenedor">
+
+    <div class="header">
+        <nav class="nav-menu">
+            <a href="Galeria.html" class="nav-item" title="Galeria">🖼️</a>
+            <a href="panel de acceso.html" class="nav-item" title="Panel de Control">🟩</a>
+            <a href="informacion.html" class="nav-item" title="Información">🗄️</a>
+            <a href="mailto:lucaszv2006@gmail.com" class="nav-item" title="Gmail">📧</a>
+            <a href="tel:+50686787471" class="nav-item" title="Contacto">📞</a>
+            <a href="Terminos_y_condiciones.html" class="nav-item" title="Terminos y Condiciones">📝</a>
+            <a href="Seleccion_de_metodo_de_pago.html" class="nav-item" title="Seleccion_de_metodo_de_pago">💳</a>
+            <a href="index.html" class="nav-item">Inicio</a>
+        </nav>
+    </div>
+
+    <h3 class="titulo_principal">Nueva reserva</h3>
+
+    <label for="slcPago">Método de pago:</label>
+    <select id="slcPago">
+        <option value="0">-- Elegí una opción --</option>
+        <option value="tarjeta">Tarjeta</option>
+        <option value="transferencia">Transferencia</option>
+        <option value="efectivo">Efectivo</option>
+        <option value="paypal">PayPal</option>
+    </select>
+
+    <hr>
+
+    <div id="blkTarjeta" class="panel oculto">
+        <h4>Pago con tarjeta</h4>
+        <ul>
+            <li>Se acepta VISA/Mastercard.</li>
+            <li>Comisión 3.5%.</li>
+            <li>Confirmación inmediata.</li>
+        </ul>
+    </div>
+
+    <div id="blkTransferencia" class="panel oculto">
+        <h4>Transferencia bancaria</h4>
+        <ul>
+            <li>Banco: CR–123456–001</li>
+            <li>Adjuntar comprobante.</li>
+            <li>Acreditación 24–48 h.</li>
+        </ul>
+    </div>
+
+    <div id="blkEfectivo" class="panel oculto">
+        <h4>Efectivo en oficina</h4>
+        <ul>
+            <li>Horarios: Lun–Vie 8:00–18:00</li>
+            <li>Dirección: San Pedro de la Tigra, Alajuela, Costa Rica</li>
+            <li>Reserva válida 24 h.</li>
+        </ul>
+    </div>
+
+    <div id="blkPaypal" class="panel oculto">
+        <h4>Pago con PayPal</h4>
+        <ul>
+            <li>Comisión 4%.</li>
+            <li>Confirmación inmediata.</li>
+        </ul>
+    </div>
+
+    <div class="panel_interectivo_tarjeta" id="blkTarjeta">
+        <h4>Ingresá los datos de tu tarjeta</h4>
+        <br>
+        <label for="txtNombre">Nombre en la tarjeta:</label>
+        <input type="text" id="txtNombre" placeholder="Nombre completo">
+        <br>
+        <label for="txtNumero">Número de tarjeta:</label>
+        <input type="text" id="txtNumero" placeholder="XXXX-XXXX-XXXX-XXXX">
+        <br>
+        <label for="txtVencimiento">Fecha de vencimiento:</label>
+        <input type="text" id="txtVencimiento" placeholder="MM/AA">
+        <br>
+        <label for="txtCVV">CVV:</label>
+        <input type="text" id="txtCVV" placeholder="XXX">
+    </div>
+
+    <div class="panel_interectivo_transferencia" id="blkTransferencia">
+        <h4>Instrucciones para transferencia bancaria</h4>
+        <p>Por favor, realiza la transferencia a la cuenta indicada y envía el comprobante a nuestro correo
+            electrónico.<strong> (lukehousecasatranquila@gmail.com)</strong>, y hacer el simpe al
+            <strong>8678-7471</strong></p>
+    </div>
+
+    <div class="panel_interectivo_efectivo" id="blkEfectivo">
+        <h4>Instrucciones para pago en efectivo</h4>
+        <p>Visita nuestra oficina en el horario indicado para completar tu pago en efectivo.</p>
+    </div>
+
+    <div class="panel_interectivo_paypal" id="blkPaypal">
+        <h4>Instrucciones para pago con PayPal</h4>
+        <p>Serás redirigido a la plataforma de PayPal para completar tu pago de manera segura.</p>
+    </div>
+    <script src="./js/Seleccion_de_metodo_de_pago.js"></script>
+</body>
+
+</html>

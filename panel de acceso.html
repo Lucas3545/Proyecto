@@ -3,139 +3,31 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="./css/estilos_panes.css" />
 <title>Panel de Registro e Inicio de Sesión con Botón</title>
 
 </head>
 <body>
+<header class="container-xl">
         <details>
     <summary>&#9776;</summary>
-       <li><a href="http://localhost:63342/Proyecto/index.html" class="nav-item" title="Inicio">⏪Inicio</a></li>
-        <li><a href="http://localhost:63342/Proyecto/informaci%C3%B3n.html?_ijt=ael9v3sj82lng3ku64h3pa9r5q&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="Información">🗄️Información</a></li>
-    <li><a href="http://localhost:63342/Proyecto/galeria.html?_ijt=bl5hgrs3gi2m0pctmminahaqs8&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="Galeria">🖼️Galeria</a></li>
-    <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">📧gmail</a></li>
+        <li><a href="index.html" class="nav-item" title="Inicio">⏪Inicio</a></li>
+        <li><a href="informacion.html" class="nav-item" title="Información">🗄️Información</a></li>
+        <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">📧gmail</a></li>
         <li><a href="tel:+50683256836" class="nav-item" title="Contacto">📞Contacto</a></li>
-        <li><a href="http://localhost:63342/Proyecto/Terminos_y_condiciones.html?_ijt=234h3eno0g6icvquo8a7icf1pg&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="Terminos y Condiciones">📝Terminos y condiciones</a></li>
+        <li><a href="Terminos_y_condiciones.html" class="nav-item" title="Terminos y Condiciones">📝Terminos y condiciones</a></li>
 </details>
-        <style>
-     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea, #4ba0a2);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #333;
-    overflow: hidden;
-    background-size: cover;
-  }
-  #openPanelBtn {
-    padding: 14px 28px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: white;
-    background-image: url() rgb(255, 255, 255);
-    background-repeat: no-repeat;
-    border: none dotted 1.5px rgba(red, green, blue, alpha);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    z-index: 10;
-    position: relative;
-  }
-  #openPanelBtn:hover {
-    background: #64a711;
-    border: dotted 2.5px rgba(red, green, blue, alpha);
-  }
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9;
-  }
-  .container {
-    background: #fff;
-    border-radius: 12px;
-    width: 400px;
-    max-width: 90vw;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.2);
-    overflow: hidden;
-  }
-  .tabs {
-    display: flex;
-  }
-  .tab {
-    flex: 1;
-    padding: 16px;
-    background: #f3f3f3;
-    text-align: center;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    user-select: none;
-  }
-  .tab.active {
-    background: #667eea;
-    color: white;
-    box-shadow: inset 0 -3px 0 #764ba2;
-  }
-  form {
-    padding: 24px;
-  }
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
-  input[type="text"],
-  input[type="email"],
-  input[type="password"] {
-    width: 100%;
-    padding: 12px 14px;
-    margin-bottom: 18px;
-    border: 1.5px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-  }
-  input[type="text"]:focus,
-  input[type="email"]:focus,
-  input[type="password"]:focus {
-    border-color: #667eea;
-    outline: none;
-  }
-  button.submit-btn {
-    width: 100%;
-    padding: 14px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: rgb(red, green, blue);
-    background-color: rgba(red, green, blue, alpha);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button.submit-btn:hover {
-    background: #35737e;
-  }
-  .form-message {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 0.9rem;
-    color: red;
-  }
-
-
-</style>
+</header>
+<main>
+  <nav class="footer-nav">
+        <a class="nav-item-footer" href="index.html">Inicio</a>
+        <a class="nav-item-footer" href="informacion.html">Información</a>
+        <a class="nav-item-footer" href="mailto:lucaszv2006@gmail.com">📧gmail</a>
+        <a class="nav-item-footer" href="tel:+50683256836">📞Contacto</a>
+        <a class="nav-item-footer" href="Terminos_y_condiciones.html">📝Terminos y condiciones</a>
+    </nav>
+    <h1 class="titulo-principal">Panel de Acceso</h1>
+  <p class="subtitle">Inicia sesión o regístrate para acceder a funciones exclusivas</p>
   <button id="openPanelBtn" aria-expanded="false" aria-controls="authPanel" style="color: black;">Abrir Panel de Acceso</button>
 
   <div class="overlay" id="authPanel" role="dialog" aria-modal="true" aria-labelledby="authPanelTitle" tabindex="-1">
@@ -166,143 +58,12 @@
       </form>
     </div>
   </div>
-
-<script>
-  const openPanelBtn = document.getElementById('openPanelBtn');
-  const overlay = document.getElementById('authPanel');
-  const tabLogin = document.getElementById('tab-login');
-  const tabRegister = document.getElementById('tab-register');
-  const formLogin = document.getElementById('form-login');
-  const formRegister = document.getElementById('form-register');
-  const loginMessage = document.getElementById('login-message');
-  const registerMessage = document.getElementById('register-message');
-
-  openPanelBtn.addEventListener('click', () => {
-    const expanded = openPanelBtn.getAttribute('aria-expanded') === 'true';
-    if (expanded) {
-      closePanel();
-    } else {
-      openPanel();
-    }
-  });
-
-  function openPanel() {
-    overlay.style.display = 'flex';
-    openPanelBtn.setAttribute('aria-expanded', 'true');
-    // Focus first tab
-    tabLogin.focus();
-    document.body.style.overflow = 'hidden'; // prevent background scroll
-  }
-
-  function closePanel() {
-    overlay.style.display = 'none';
-    openPanelBtn.setAttribute('aria-expanded', 'false');
-    openPanelBtn.focus();
-    document.body.style.overflow = ''; // restore scroll
-  }
-
-  // Close panel if clicking outside container
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      closePanel();
-    }
-  });
-
-  // Keyboard: closing on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === "Escape" && overlay.style.display === 'flex') {
-      closePanel();
-    }
-  });
-
-  tabLogin.addEventListener('click', () => {
-    selectTab('login');
-  });
-
-  tabRegister.addEventListener('click', () => {
-    selectTab('register');
-  });
-
-  function selectTab(tab) {
-    clearMessages();
-    if (tab === 'login') {
-      tabLogin.classList.add('active');
-      tabLogin.setAttribute('aria-selected', 'true');
-      tabLogin.tabIndex = 0;
-      tabRegister.classList.remove('active');
-      tabRegister.setAttribute('aria-selected', 'false');
-      tabRegister.tabIndex = -1;
-
-      formLogin.style.display = 'block';
-      formLogin.setAttribute('aria-hidden', 'false');
-      formRegister.style.display = 'none';
-      formRegister.setAttribute('aria-hidden', 'true');
-      formLogin.querySelector('input').focus();
-    } else {
-      tabRegister.classList.add('active');
-      tabRegister.setAttribute('aria-selected', 'true');
-      tabRegister.tabIndex = 0;
-      tabLogin.classList.remove('active');
-      tabLogin.setAttribute('aria-selected', 'false');
-      tabLogin.tabIndex = -1;
-
-      formRegister.style.display = 'block';
-      formRegister.setAttribute('aria-hidden', 'false');
-      formLogin.style.display = 'none';
-      formLogin.setAttribute('aria-hidden', 'true');
-      formRegister.querySelector('input').focus();
-    }
-  }
-
-  function clearMessages() {
-    loginMessage.textContent = '';
-    loginMessage.style.color = 'red';
-    registerMessage.textContent = '';
-    registerMessage.style.color = 'red';
-  }
-
-  formLogin.addEventListener('submit', e => {
-    e.preventDefault();
-    clearMessages();
-
-    const email = formLogin['login-email'].value.trim();
-    const password = formLogin['login-password'].value;
-
-    if (!email || !password) {
-      loginMessage.textContent = 'Por favor, completa todos los campos.';
-      return;
-    }
-
-    loginMessage.style.color = 'green';
-    loginMessage.textContent = '¡Inicio de sesión exitoso! (simulado)';
-  });
-
-  formRegister.addEventListener('submit', e => {
-    e.preventDefault();
-    clearMessages();
-
-    const name = formRegister['register-name'].value.trim();
-    const email = formRegister['register-email'].value.trim();
-    const password = formRegister['register-password'].value;
-    const confirmPassword = formRegister['register-confirm-password'].value;
-
-    if (!name || !email || !password || !confirmPassword) {
-      registerMessage.textContent = 'Por favor, completa todos los campos.';
-      return;
-    }
-    if (password.length < 6) {
-      registerMessage.textContent = 'La contraseña debe tener al menos 6 caracteres.';
-      return;
-    }
-    if (password !== confirmPassword) {
-      registerMessage.textContent = 'Las contraseñas no coinciden.';
-      return;
-    }
-
-    registerMessage.style.color = 'green';
-    registerMessage.textContent = '¡Registro exitoso! (simulado)';
-    formRegister.reset();
-  });
-</script>
+</main>
+<footer>
+  <p>&copy; Derechos de autor reservados a lucaszv2006</p>
+  <p><a href="politica_de_privacidad.html">Política de Privacidad</a></p>
+  <p><a href="terminos_y_condiciones.html">Términos y Condiciones</a></p>
+</footer>
+<script src="./js/panel_de_acceso.js"></script>
 </body>
 </html>

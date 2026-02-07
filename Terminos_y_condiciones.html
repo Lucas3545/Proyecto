@@ -6,22 +6,155 @@
     <title>Términos y Condiciones</title>
 </head>
 <body>
-<!--Barra de botones-->
-<div class="header">
-    <h1 align="center">Information</h1>
-    <nav class="nav-menu" align="center">
-        <a href="http://localhost:63342/Proyecto/index.html?_ijt=uhbqo0mj0lt03fjciokl810oit&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="inicio">⏪Inicio</a>
-        <a href="http://localhost:63342/Proyecto/panel%20de%20acceso.html?_ijt=n125d96n9jdv4o7qirb8fph3g8&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="panel de control">🟩panel de acceso</a>
-        <a href="http://localhost:63342/Proyecto/galeria.html?_ijt=bl5hgrs3gi2m0pctmminahaqs8&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="galeria">🖼️Galeria</a>
-        <a href="mailto:lucaszv2006@gmail.com" class="nav-item" title="gmail">📧gmail</a>
-        <a href="tel:+50683256836" class="nav-item" title="Contacto">📞Contacto</a>
-        <a href="http://localhost:63342/Proyecto/css/Calendario.html?_ijt=osmrthkvnheti475ra86m6nsvk&_ij_reload=RELOAD_ON_SAVE" class="nav-item" title="Calendary">📅Calendario</a>
-    </nav>
-</div>
+
+<header>
+        <h1 id="titulo">Formulario de aceptación de condiciones</h1>
+</header>
+<main>
 <style>
-    .nav-item {
+body {
+  background: linear-gradient(135deg, #ff6f61, #4fc3f7);
+  font-family: 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+.container-xxl {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  background: scroll;
+  background-color: #9fbd42cc;
+  border-radius: 50px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border: solid 1px rgba(0, 0, 0, 0.589);
+}
+.contenedor {
+  max-width: 480px;
+  margin: 4rem auto;
+  background-color: #ffffffcc;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+}
+
+.formulario label {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #ff5722;
+}
+
+.formulario input[type="text"],
+.formulario input[type="email"],
+.formulario input[type="tel"],
+.formulario input[type="password"] {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+.formulario input:focus {
+  border-color: #4fc3f7;
+  outline: none;
+}
+
+.formulario input[type="submit"] {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #ff7043;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.formulario input[type="submit"]:hover {
+  background-color: #e64a19;
+}
+
+.formulario a {
+  display: block;
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #0288d1;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.formulario a:hover {
+  color: #ff5722;
+}
+
+.formulario label input[type="radio"] {
+  margin-right: 0.5rem;
+  accent-color: #ff7043;
+}
+
+@media (max-width: 768px) {
+.contenedor {
+    margin: 2rem 1rem;
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+  }
+
+.formulario label {
+    font-size: 0.9rem;
+  }
+
+  .formulario input[type="text"],
+  .formulario input[type="email"],
+  .formulario input[type="tel"],
+  .formulario input[type="password"],
+  .formulario input[type="submit"] {
+    font-size: 1rem;
+    padding: 0.6rem;
+  }
+
+  .formulario input[type="submit"] {
+    padding: 0.7rem;
+  }
+
+  .formulario a {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor {
+    padding: 1rem;
+  }
+
+.formulario label {
+    font-size: 0.85rem;
+  }
+
+.formulario input[type="submit"] {
+    font-size: 0.95rem;
+  }
+
+  .formulario a {
+    font-size: 0.85rem;
+  }
+}
+
+.nav-item {
     padding: 10px 20px;
-    background:rgba(255, 255, 255, 0.9);
+    background:rgba(172, 192, 24, 0.9);
+    color: var(--text-dark);
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
 .nav-menu {
     display: flex;
     justify-content: center;
@@ -39,14 +172,6 @@
     margin-left: 5px;
     margin-right: 5px;
     gap: 10px;
-
-}
-
-color: rgba(255, 255, 255, 0.9);
-    border-radius: 25px;
-    color: var(--text-dark);
-    text-decoration: none;
-    transition: all 0.3s ease;
 }
 
 .nav-item:hover {
@@ -54,18 +179,15 @@ color: rgba(255, 255, 255, 0.9);
     color: var(--white);
     transform: scale(1.05);
 }
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .search-bar:hover,
     .search-bar:focus-within {
         width: 200px;
     }
-
-    .nav-menu {
-        flex-wrap: wrap;
     }
-    .inicio {
-     padding: 10px 20px;
+.inicio {
+    padding: 10px 20px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 25px;
     color: var(--text-dark);
@@ -76,56 +198,175 @@ color: rgba(255, 255, 255, 0.9);
     border: #ffd54f;
     background-color: #78909c;
     color: #333333;
-     transform: translateY(-5px);
+    transform: translateY(-5px);
 }
-
-</style>
-<!-- Estilos para los términos y condiciones -->
-<style>
-     body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 0;
-            color: #222;
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+    color: #222;
         }
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            padding: 40px 32px;
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 40px 32px;
         }
-        h1 {
-            color: #2d6a4f;
-            margin-bottom: 24px;
-            text-align: center;
+h1 {
+    color: #2d6a4f;
+    margin-bottom: 24px;
+    text-align: center;
         }
-        h2 {
-            color: #40916c;
-            margin-top: 32px;
+h2 {
+    color: #40916c;
+    margin-top: 32px;
         }
-        p, li {
-            line-height: 1.7;
+p, li {
+    line-height: 1.7;
         }
-        ul {
-            margin-left: 20px;
+ul {
+    margin-left: 20px;
         }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #888;
-            font-size: 0.95em;
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #888;
+    font-size: 0.95em;
         }
         @media (max-width: 600px) {
-            .container {
-                padding: 20px 8px;
-            }
-        }
+body {
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+.contenedor {
+  max-width: 500px;
+  margin: 3rem auto;
+  background-color: #ffffff10;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+.pie {
+  background-color: #1e1e2f;
+  color: #f0f0f0;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  border-top: 4px solid #4caf50;
+}
+.pie h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #4caf50;
+}
+.pie p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+.pie ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.pie li {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+.pie a {
+  color: #81d4fa;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.pie a:hover {
+  color: #4caf50;
+  text-decoration: underline;
+}
+.footer-nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0;
+  margin-top: 1.5rem;
+}
+
+.footer-nav li {
+  font-size: 0.95rem;
+}
+@media (max-width: 600px) {
+  .footer-nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0;
+  margin-top: 1.5rem;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.footer-links li {
+  font-size: 0.95rem;
+}
+.footer-copy {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #412895;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  text-align: center;
+}
+@media (max-width: 600px) {
+    .formulario {
+        padding: 20px 8px;
+    }
+}
+    .nav-item {
+        flex: 1;
+        text-align: center;
+    }
+.container-sm {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: #ffffff10;
+  backdrop-filter: blur(10px);
+}
+/*area responsive para dispositivos moviles*/
+@media (max-width: 768px) {
+    .nav-menu {
+        flex-wrap: wrap;
+    }
+}
 </style>
+<!--Barra de navegacion-->
+<div>
+    <nav class="nav-menu" style="align-items: center;">
+        <a href="Galeria.html" class="nav-item" title="Galeria">🖼️Galería</a>
+        <a href="panel de acceso.html" class="nav-item" title="Panel de Control">🟩panel de acceso</a>
+        <a href="informacion.html"  class="nav-item" title="Información">🗄️Información</a>
+        <a href="mailto:lucaszv2006@gmail.com" class="nav-item" style="text-align:center" title="Gmail">📧gmail</a>
+        <a href="tel:+50686787471" class="nav-item" title="Contacto">📞Contacto</a>
+        <a href="Terminos_y_condiciones.html" class="nav-item" title="Terminos y Condiciones">📝Terminos y condiciones</a>
+        <a href="Seleccion_de_metodo_de_pago.html" class="nav-item" title="Seleccion_de_metodo_de_pago">Metodo de pago</a>
+        <a href="index.html" class="nav-item">Inicio</a>
+    </nav>
+</div>
 <!-- Contenido de los términos y condiciones -->
-    <div class="container">
+    <div class="container-xxl">
         <h1>Términos y Condiciones</h1>
         <p>Bienvenido a nuestro sitio web. Al acceder o utilizar este sitio, aceptas cumplir con los siguientes términos y condiciones:</p>
 
@@ -157,13 +398,9 @@ color: rgba(255, 255, 255, 0.9);
         </div>
     </div>
 <!-- Formulario de aceptación de condiciones -->
-<header>
-        <h1 id="titulo">Formulario de aceptación de condiciones</h1>
-    </header>
-        <main>
-            <seccion>
-                <div class="contenedor">
-                    <form action="/enviar" method="post" class="formulario">
+            <section>
+                <main class="contenedor">
+                    <form action="enviar.php" method="post" class="formulario">
                         <label for="nombre">Nombre:</label>
                         <input type="text" name="nombre" id="nombre" placeholder="Escriba su nombre">
                         <br>
@@ -173,99 +410,38 @@ color: rgba(255, 255, 255, 0.9);
                         <label for="email">Email:</label>
                         <input type="email" name="email" id="email" placeholder="Escriba su email">
                         <br>
-                        <label for="telefono">Telefono:</label>
-                        <input type="tel" name="telefono" id="telefono" placeholder="Escriba su telefono">
-                        <br>
-                        <label for="password">Contraseña:</label>
-                        <input type="password" name="password" id="password"v placeholder="Escriba su contraseña">
-                        <br>
-                        <input type="submit" value="Enviar">
-                        <br>
-                        <a href="doc/cuaderno_ejercicios_paa_2023_1.pdf" download="Terminos_y_Condiciones.pdf">
-                            <br>
-                              <label>
-                        <input type="radio" name="acuerdo" value="si" required>
-                        Estoy de acuerdo
-                    </label>
-                    <br>
-                    <label>
-                        <input type="radio" name="acuerdo" value="no">
-                        No estoy de acuerdo
-                    </label>
-                            <br>
-    Descargar Términos y Condiciones
-</a>
-                        <style>
-                            .formulario {
-    background: #f8fafc;
-    border-radius: 10px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    padding: 32px 24px;
-    max-width: 400px;
-    margin: 32px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-.formulario label {
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #2d6a4f;
-}
-.formulario input[type="text"],
-.formulario input[type="email"],
-.formulario input[type="tel"],
-.formulario input[type="password"] {
-    padding: 10px;
-    border: 1px solid #b7e4c7;
-    border-radius: 6px;
-    font-size: 1em;
-    background: #fff;
-    transition: border 0.2s;
-}
-.formulario input:focus {
-    border: 1.5px solid #40916c;
-    outline: none;
-}
-.formulario input[type="submit"] {
-    background: #2d6a4f;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-.formulario input[type="submit"]:hover {
-    background: #40916c;
-}
-.formulario .radio-group {
-    display: flex;
-    gap: 24px;
-    margin: 12px 0;
-}
-.formulario .radio-group label {
-    font-weight: 400;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-@media (max-width: 600px) {
-    .formulario {
-        padding: 20px 8px;
-    }
-}
-                            </style>
+                <input type="submit" value="Enviar">
+                <br>
+                <br>
+                <label>
+                    <input type="radio" name="acuerdo" value="si" required>
+                    Estoy de acuerdo
+                </label>
+                <br>
+                <label>
+                    <input type="radio" name="acuerdo" value="no">
+                    No estoy de acuerdo
+                </label>
+        </form>
+        <br>
+        Descargar Términos y Condiciones
+        <a href="doc/Terminos_y_Condiciones.pdf" download="Terminos_y_Condiciones.pdf" class="btn">Descargar PDF</a>
+    </main>
+    <footer class="container-sm">
+        <h2>Información de contacto</h2>
+        <p>Si tienes alguna duda o necesitas más información, no dudes en contactarnos.</p>
+        <ul>
+            <li><strong>Correo electrónico:</strong> <a href="mailto: kelyzuva@gmail.com">kelyzuva@gmail.com</a></li>
+        </ul>
+        <p class="footer-copy">&copy; Derechos de autor reservados a Lucas Zúñiga</p>
+        <nav class="footer-nav">
+            <ul class="footer-links">
+                <li><a href="tel:+50683256836">Contacto +506 8325-6836</a></li>
+                <li><a href="privacidad.html">Política de Privacidad</a></li>
+                <li><a href="terminos.html">Términos y Condiciones</a></li>
+            </ul>
+        </nav>
+    </footer>
+    <script src="./js/Terminos_y_condicones.js"></script>
 </body>
 </html>
-<script>
-    document.querySelector('.formulario').addEventListener('submit', function(event) {
-        const acuerdoSi = document.querySelector('input[name="acuerdo"][value="si"]');
-        if (!acuerdoSi.checked) {
-            event.preventDefault();
-            alert('Debes aceptar los términos y condiciones para continuar.');
-        }
-    });    
-</script>

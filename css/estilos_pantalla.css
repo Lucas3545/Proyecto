@@ -1,0 +1,61 @@
+body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #a8dadc 0%, #457b9d 60%, #f4a261 100%);
+            overflow: hidden;
+        }
+        .splash {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.85);
+            z-index: 9999;
+            animation: fadeIn 1.2s;
+        }
+        .splash.hide {
+            animation: fadeOut 1s forwards;
+        }
+        .welcome-title {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #264653;
+            letter-spacing: 1.5px;
+            background: linear-gradient(90deg, #2a9d8f, #e9c46a, #f4a261);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideUp 1.2s cubic-bezier(.4,1.6,.6,1) 0.2s both;
+            margin-bottom: 18px;
+        }
+        .subtitle {
+            font-size: 1.3rem;
+            color: #457b9d;
+            letter-spacing: 1px;
+            opacity: 0.85;
+            animation: fadeIn 1.5s 0.8s both;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px);}
+            to   { opacity: 1; transform: translateY(0);}
+        }
+        /*area responsive para dispositivos moviles*/
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+        }
