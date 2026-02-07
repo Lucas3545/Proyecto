@@ -1,3 +1,5 @@
+
+//alert(90900);
 const openPanelBtn = document.getElementById('openPanelBtn');
   const overlay = document.getElementById('authPanel');
   const tabLogin = document.getElementById('tab-login');
@@ -102,11 +104,25 @@ const openPanelBtn = document.getElementById('openPanelBtn');
       return;
     }
 
-    loginMessage.style.color = 'green';
-    loginMessage.textContent = '¡Inicio de sesión exitoso! (simulado)';
+    const lsEmail = localStorage.getItem('email');
+    const lsPw = localStorage.getItem('password');
+
+    if (lsEmail == email && lsPw == password) {
+      alert('Bienvenido ' + email)
+      //loginMessage.style.color = 'green';
+      //loginMessage.textContent = '¡Inicio de sesión exitoso! (simulado)';
+
+      closePanel();
+      window.location.href = 'index.html';
+    } else {
+      alert('No registrado');
+      //loginMessage.style.color = 'red';
+      //loginMessage.textContent = '¡Usuario invalido';
+    }
+
   });
 
-  formRegister.addEventListener('submit', e => {
+  /*formRegister.addEventListener('submit', e => {
     e.preventDefault();
     clearMessages();
 
@@ -128,11 +144,15 @@ const openPanelBtn = document.getElementById('openPanelBtn');
       return;
     }
 
+    console.log('email', email, 'password', password);
+    localStorage.setItem('email', email);
+    localStorage.setItem('password', password);
+
     registerMessage.style.color = 'green';
     registerMessage.textContent = '¡Registro exitoso!';
     formRegister.reset();
-  });
-    formLogin.addEventListener('submit', closePanel);
-    formLogin.addEventListener('submit', () => {
-      window.location.href = 'index.html';
-    });
+  });*/
+    //formLogin.addEventListener('submit', closePanel);
+    //formLogin.addEventListener('submit', () => {
+      //window.location.href = 'index.html';
+    //});
