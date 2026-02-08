@@ -13,8 +13,8 @@ try {
     //echo $data;
     //die();
 
-    $stmt = $conn->prepare("INSERT INTO users (email, password, fullname, username) VALUES (?, ?, ?, ?)"); //TODO: change fullname to username
-    $stmt->bind_param("ssss", $_POST['register-email'], $_POST['register-password'], $_POST['register-name'], $_POST['register-name']);
+    $stmt = $conn->prepare("INSERT INTO users (email, password, fullname, username) VALUES (?, ?, ?, ?, ?)"); //TODO: change fullname to username
+    $stmt->bind_param("sssss", $_POST['register-email'], $_POST['register-password'], $_POST['register-name'], $_POST['register-name'], $_POST ['register-username']);
 
     if ($stmt->execute()) {
         echo json_encode(["mensaje" => "Datos guardados correctamente"]);
