@@ -26,8 +26,12 @@
             }
         });
 
-        tarjeta.addEventListener ("input", () => {
-            console.log ("Datos de tarjeta ingresados");
+        const formularioTarjeta = document.getElementById("formTarjeta");
+        
+        formularioTarjeta.addEventListener("submit", (e) => {
+            e.preventDefault();
+            console.log("Formulario de tarjeta enviado");
+            formularioTarjeta.submit();
         });
 
         transferencia.addEventListener ("input", () => {

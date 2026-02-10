@@ -72,8 +72,9 @@
         </ul>
     </div>
 
-    <div class="panel_interectivo_tarjeta" id="blkTarjeta" action="../PHP/procesar_tarjeta.php">
+    <div class="panel_interectivo_tarjeta" id="blkTarjeta">
         <h4>Ingresá los datos de tu tarjeta</h4>
+        <form id="formTarjeta" action="../PHP/procesar_tarjeta.php" method="POST">
         <br>
         <label for="txtNombre">Nombre en la tarjeta:</label>
         <input type="text" id="txtNombre" placeholder="Nombre completo" name="register-nombre">
@@ -85,7 +86,10 @@
         <input type="text" id="txtVencimiento" placeholder="MM/AA" name="register-vencimiento">
         <br>
         <label for="txtCVV">CVV:</label>
-        <input type="text" id="txtCVV" placeholder="XXX" name="register-txt">
+        <input type="text" id="txtCVV" placeholder="XXX" name="register-cvv">
+        <br><br>
+        <button type="submit">Pagar</button>
+        </form>
     </div>
 
     <div class="panel_interectivo_transferencia" id="blkTransferencia">

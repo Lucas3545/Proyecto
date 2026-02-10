@@ -2,8 +2,8 @@
 
 include('./includes/config.php');
 try {
-
-    $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
+$conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
+    
 
     if ($conn->connect_error) {
         die("Conexión fallida: " . $conn->connect_error);
