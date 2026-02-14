@@ -1,3 +1,9 @@
+:root {
+    --text-dark: #333333;
+    --primary-blue: #007bff;
+    --white: #ffffff;
+}
+
         .oculto { display: none; }
         .panel  { padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-top: 8px; }
 
@@ -67,7 +73,7 @@ button:hover {
 }
 .nav-item {
     padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(240, 236, 236, 0.9);
     border-radius: 25px;
     color: var(--text-dark);
     text-decoration: none;

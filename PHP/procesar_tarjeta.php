@@ -26,7 +26,6 @@ try {
     $red_de_pago = isset($_POST['red_de_pago']) ? $conn->real_escape_string($_POST['red_de_pago']) : '';
     $email_usuario = isset($_POST['email_usuario']) ? $conn->real_escape_string($_POST['email_usuario']) : '';
 
-    // Validar formato de tarjeta (básico)
     if (!preg_match('/^[0-9]{13,19}$/', $numero)) {
         echo json_encode(["mensaje" => "Número de tarjeta inválido"]);
         die();
