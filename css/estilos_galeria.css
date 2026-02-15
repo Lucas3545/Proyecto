@@ -192,3 +192,57 @@
         margin-bottom: 10px;
     }
 }
+
+/* Minimalist Footer */
+.minimal-footer {
+    background-color: #1a1a1a;
+    padding: 30px 20px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.copyright {
+    color: #888;
+    font-size: 14px;
+    margin: 0 0 15px 0;
+    font-weight: 400;
+}
+
+.footer-nav-minimal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.footer-nav-minimal a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer-nav-minimal a:hover {
+    color: #fff;
+}
+
+.separator {
+    color: #555;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .footer-nav-minimal {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .separator {
+        display: none;
+    }
+}

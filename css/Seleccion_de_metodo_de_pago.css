@@ -4,8 +4,16 @@
     --white: #ffffff;
 }
 
-        .oculto { display: none; }
-        .panel  { padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-top: 8px; }
+.oculto {
+    display: none;
+}
+
+.panel {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 8px;
+}
 
 .panel_interectivo_tarjeta {
     border: 2px solid #4CAF50;
@@ -20,6 +28,7 @@
 .panel_interectivo_tarjeta:hover {
     background-color: #e0f7fa;
 }
+
 .panel_interectivo_paypal {
     border: 2px solid #0070BA;
     background-color: #f9f9f9;
@@ -71,6 +80,7 @@ button:hover {
     border-radius: 8px;
     background-color: #fdfdfd;
 }
+
 .nav-item {
     padding: 10px 20px;
     background: rgba(240, 236, 236, 0.9);
@@ -87,15 +97,17 @@ button:hover {
 }
 
 @media (max-width: 768px) {
+
     .search-bar:hover,
     .search-bar:focus-within {
         width: 200px;
     }
 
-        .nav-menu {
-            flex-wrap: wrap;
-        }
+    .nav-menu {
+        flex-wrap: wrap;
     }
+}
+
 .footer-nav {
     display: flex;
     justify-content: center;
@@ -117,14 +129,71 @@ button:hover {
     color: var(--white);
     transform: scale(1.05);
 }
+
 .pie_de_pagina {
     text-align: center;
     margin: 5px 0;
     color: var(--text-dark);
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
+
 .header {
     border: solid dotted cadetblue;
     text-align: center;
     box-shadow: #2c3e50;
+}
+
+/* Minimalist Footer */
+.minimal-footer {
+    background-color: #1a1a1a;
+    padding: 30px 20px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.copyright {
+    color: #888;
+    font-size: 14px;
+    margin: 0 0 15px 0;
+    font-weight: 400;
+}
+
+.footer-nav-minimal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.footer-nav-minimal a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer-nav-minimal a:hover {
+    color: #fff;
+}
+
+.separator {
+    color: #555;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .footer-nav-minimal {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .separator {
+        display: none;
+    }
 }

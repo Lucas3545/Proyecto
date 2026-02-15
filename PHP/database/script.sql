@@ -21,3 +21,14 @@ CREATE TABLE `lukes`.`users` (
   `fecha_registro` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX `idx_email` (`email_usuario`)
 );
+
+CREATE TABLE `lukes`.`reservations` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `fecha` DATE NOT NULL COMMENT 'Fecha de la reserva',
+  `nombre` VARCHAR(100) NOT NULL COMMENT 'Nombre del huésped',
+  `email` VARCHAR(100) NOT NULL COMMENT 'Correo del huésped',
+  `estado` ENUM('confirmada', 'cancelada') DEFAULT 'confirmada' COMMENT 'Estado de la reserva',
+  `fecha_registro` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE INDEX `idx_fecha` (`fecha`),
+  INDEX `idx_email_reserva` (`email`)
+) COMMENT 'Tabla de reservas del calendario';

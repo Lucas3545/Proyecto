@@ -75,20 +75,20 @@
     <div class="panel_interectivo_tarjeta" id="blkTarjeta">
         <h4>Ingresá los datos de tu tarjeta</h4>
         <form id="formTarjeta" action="../PHP/procesar_tarjeta.php" method="POST">
-        <br>
-        <label for="txtNombre">Nombre en la tarjeta:</label>
-        <input type="text" id="txtNombre" placeholder="Nombre completo" name="register-nombre">
-        <br>
-        <label for="txtNumero">Número de tarjeta:</label>
-        <input type="text" id="txtNumero" placeholder="XXXX-XXXX-XXXX-XXXX" name="register-numero">
-        <br>
-        <label for="txtVencimiento">Fecha de vencimiento:</label>
-        <input type="text" id="txtVencimiento" placeholder="MM/AA" name="register-vencimiento">
-        <br>
-        <label for="txtCVV">CVV:</label>
-        <input type="text" id="txtCVV" placeholder="XXX" name="register-cvv">
-        <br><br>
-        <button type="submit">Pagar</button>
+            <br>
+            <label for="txtNombre">Nombre en la tarjeta:</label>
+            <input type="text" id="txtNombre" placeholder="Nombre completo" name="register-nombre">
+            <br>
+            <label for="txtNumero">Número de tarjeta:</label>
+            <input type="text" id="txtNumero" placeholder="XXXX-XXXX-XXXX-XXXX" name="register-numero">
+            <br>
+            <label for="txtVencimiento">Fecha de vencimiento:</label>
+            <input type="text" id="txtVencimiento" placeholder="MM/AA" name="register-vencimiento">
+            <br>
+            <label for="txtCVV">CVV:</label>
+            <input type="text" id="txtCVV" placeholder="XXX" name="register-cvv">
+            <br><br>
+            <button type="submit">Pagar</button>
         </form>
     </div>
 
@@ -96,7 +96,8 @@
         <h4>Instrucciones para transferencia bancaria</h4>
         <p>Por favor, realiza la transferencia a la cuenta indicada y envía el comprobante a nuestro correo
             electrónico.<strong> (lukeshouse@gmail.com)</strong>, y hacer el simpe al
-            <strong>8678-7471</strong></p>
+            <strong>8678-7471</strong>
+        </p>
     </div>
 
     <div class="panel_interectivo_efectivo" id="blkEfectivo">
@@ -107,12 +108,25 @@
     <div class="panel_interectivo_paypal" id="blkPaypal">
         <h4>Instrucciones para pago con PayPal</h4>
         <p>Serás redirigido a la plataforma de PayPal para completar tu pago de manera segura.</p>
-            <button onclick="window.location.href='https://www.paypal.com/cr/home';">
-                Ir a PayPal
-            </button>
+        <button onclick="window.location.href='https://www.paypal.com/cr/home';">
+            Ir a PayPal
+        </button>
 
     </div>
     <script src="./js/Seleccion_de_metodo_de_pago.js"></script>
+
+    <footer class="minimal-footer">
+        <div class="footer-content">
+            <p class="copyright">&copy; 2024 Luke's House Casa Tranquila. Todos los derechos reservados.</p>
+            <nav class="footer-nav-minimal">
+                <a href="tel:+50683256836">Contacto</a>
+                <span class="separator">|</span>
+                <a href="Terminos_y_condiciones.html">Términos</a>
+                <span class="separator">|</span>
+                <a href="informacion.html">Información</a>
+            </nav>
+        </div>
+    </footer>
 </body>
 
 </html>

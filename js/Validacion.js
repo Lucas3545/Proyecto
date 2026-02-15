@@ -2,8 +2,8 @@
 // este sistema va verifiar que la tarjeta sea valida y se pueda usar para pagar en linea
 
 function validarTarjeta(numero) {
-    numero = numero.replace(/\s+/g, ''); 
-    if (!/^\d{13,19}$/.test(numero)) return false; 
+    numero = numero.replace(/\s+/g, '');
+    if (!/^\d{13,19}$/.test(numero)) return false;
     return luhnCheck(numero);
 }
 
@@ -21,9 +21,9 @@ function luhnCheck(numero) {
     }
     return suma % 10 === 0;
 }
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const formulario = document.querySelector('.formulario-tarjeta');
-    formulario.addEventListener('submit', function(event) {
+    formulario.addEventListener('submit', function (event) {
         event.preventDefault();
         const numero = formulario.numero.value;
         if (validarTarjeta(numero)) {
@@ -46,11 +46,11 @@ function enviarDatos(numero, esValida, tipo) {
             tipo_tarjeta: tipo
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Éxito:', data);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log('Éxito:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }

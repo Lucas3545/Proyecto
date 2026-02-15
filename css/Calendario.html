@@ -44,43 +44,64 @@
                 <button id="confirmReservation">Confirmar Reserva</button>
                 <div class="success-message" id="successMsg" style="display:none;">¡Reserva realizada con éxito!</div>
     </main>
-    <footer>
-        <p class="footer-text">&copy; Derechos de autor reservados a lucaszv2006</p>
-        <p class="footer-text"><a href="politica_de_privacidad.html">Política de Privacidad</a></p>
-        <p class="footer-text"><a href="terminos_y_condiciones.html">Términos y Condiciones</a></p>
+    <footer class="minimal-footer">
+        <div class="footer-content">
+            <p class="copyright">&copy; 2024 Luke's House Casa Tranquila. Todos los derechos reservados.</p>
+            <nav class="footer-nav-minimal">
+                <a href="tel:+50683256836">Contacto</a>
+                <span class="separator">|</span>
+                <a href="Terminos_y_condiciones.html">Términos</a>
+                <span class="separator">|</span>
+                <a href="informacion.html">Información</a>
+            </nav>
+        </div>
     </footer>
     <script>
-        const unavailableDates = [];
+        let unavailableDates = [];
         let selectedCell = null;
         let selectedDate = null;
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
+
+        const API_URL = '../PHP/reservas.php';
 
         const monthNames = [
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         ];
 
-        function renderCalendar(month, year) {
+        // Cargar reservas desde la base de datos
+        async function cargarReservas(month, year) {
+            try {
+                const response = await fetch(`${API_URL}?mes=${month + 1}&anio=${year}`);
+                const data = await response.json();
+                if (data.success) {
+                    unavailableDates = data.reservas.map(r => r.fecha);
+                }
+            } catch (error) {
+                console.error('Error al cargar reservas:', error);
+            }
+        }
+
+        async function renderCalendar(month, year) {
+            await cargarReservas(month, year);
+
             document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
             const daysGrid = document.getElementById('calendarDays');
             const calendarGrid = document.getElementById('calendar');
             daysGrid.innerHTML = '';
             calendarGrid.innerHTML = '';
 
-
             const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
             days.forEach(d => {
-                const dayDiv = document.createElement('div'); // crea un div por cada día de la semana
+                const dayDiv = document.createElement('div');
                 dayDiv.className = 'calendar-day';
                 dayDiv.textContent = d;
                 daysGrid.appendChild(dayDiv);
             });
 
-
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-
 
             for (let i = 0; i < firstDay; i++) {
                 const emptyCell = document.createElement('div');
@@ -88,7 +109,6 @@
                 emptyCell.style.visibility = 'hidden';
                 calendarGrid.appendChild(emptyCell);
             }
-
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -100,7 +120,7 @@
                     cell.classList.add('unavailable');
                 } else {
                     cell.addEventListener('click', function () {
-                        if (selectedCell) selectedCell.classList.remove('selected'); // elimina la clase seleccionada del elemento previamente seleccionado
+                        if (selectedCell) selectedCell.classList.remove('selected');
                         cell.classList.add('selected');
                         selectedCell = cell;
                         selectedDate = dateStr;
@@ -132,19 +152,32 @@
             document.getElementById('reservationForm').style.display = 'none';
         };
 
-        document.getElementById('confirmReservation').onclick = function () {
+        document.getElementById('confirmReservation').onclick = async function () {
             const nombre = document.getElementById('nombre').value.trim();
             const email = document.getElementById('email').value.trim();
             if (nombre && email && selectedDate) {
-                unavailableDates.push(selectedDate);
-                renderCalendar(currentMonth, currentYear);
-                document.getElementById('reservationForm').style.display = 'block';
-                document.getElementById('successMsg').style.display = 'block';
-                document.getElementById('nombre').value = '';
-                document.getElementById('email').value = '';
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fecha: selectedDate, nombre, email })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        await renderCalendar(currentMonth, currentYear);
+                        document.getElementById('reservationForm').style.display = 'block';
+                        document.getElementById('successMsg').style.display = 'block';
+                        document.getElementById('nombre').value = '';
+                        document.getElementById('email').value = '';
+                    } else {
+                        alert(data.message || 'Error al realizar la reserva');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error de conexión al servidor');
+                }
             }
         };
-
 
         renderCalendar(currentMonth, currentYear);
     </script>

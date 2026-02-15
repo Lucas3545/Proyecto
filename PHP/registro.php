@@ -2,8 +2,8 @@
 
 include('./includes/config.php');
 try {
-$conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
-    
+    $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
+
 
     if ($conn->connect_error) {
         die("Conexión fallida: " . $conn->connect_error);
@@ -14,7 +14,7 @@ $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
     //die();
 
     $stmt = $conn->prepare("INSERT INTO users (email, password, fullname, username) VALUES (?, ?, ?, ?, ?)"); //TODO: change fullname to username
-    $stmt->bind_param("sssss", $_POST['register-email'], $_POST['register-password'], $_POST['register-name'], $_POST['register-name'], $_POST ['register-username']);
+    $stmt->bind_param("sssss", $_POST['register-email'], $_POST['register-password'], $_POST['register-name'], $_POST['register-name'], $_POST['register-username']);
 
     if ($stmt->execute()) {
         echo json_encode(["mensaje" => "Datos guardados correctamente"]);
@@ -26,8 +26,6 @@ $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
     $stmt->close();
     $conn->close();
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     echo $e;
 }
-
