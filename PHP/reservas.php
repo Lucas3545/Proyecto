@@ -18,7 +18,6 @@ $conn->set_charset('utf8');
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    // Obtener todas las fechas reservadas
     $mes = isset($_GET['mes']) ? intval($_GET['mes']) : null;
     $anio = isset($_GET['anio']) ? intval($_GET['anio']) : null;
 
@@ -41,7 +40,7 @@ if ($method === 'GET') {
     $stmt->close();
 
 } elseif ($method === 'POST') {
-    // Crear una nueva reserva
+    
     $data = json_decode(file_get_contents('php://input'), true);
 
     $fecha = $data['fecha'] ?? '';
@@ -53,19 +52,16 @@ if ($method === 'GET') {
         exit;
     }
 
-    // Validar formato de fecha
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
         echo json_encode(['success' => false, 'message' => 'Formato de fecha inválido']);
         exit;
     }
 
-    // Validar email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo json_encode(['success' => false, 'message' => 'Correo electrónico inválido']);
         exit;
     }
 
-    // Verificar si la fecha ya está reservada
     $check = $conn->prepare("SELECT id FROM reservations WHERE fecha = ? AND estado = 'confirmada'");
     $check->bind_param('s', $fecha);
     $check->execute();
@@ -78,7 +74,6 @@ if ($method === 'GET') {
     }
     $check->close();
 
-    // Insertar la reserva
     $stmt = $conn->prepare("INSERT INTO reservations (fecha, nombre, email) VALUES (?, ?, ?)");
     $stmt->bind_param('sss', $fecha, $nombre, $email);
 
