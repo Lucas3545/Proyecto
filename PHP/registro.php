@@ -1,31 +1,51 @@
 <?php
+header('Content-Type: application/json');
 
 include('./includes/config.php');
+
 try {
-    $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
-
-
-    if ($conn->connect_error) {
-        die("Conexión fallida: " . $conn->connect_error);
+    // Check if form was submitted
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(["success" => false, "mensaje" => "Método no permitido"]);
+        exit();
     }
 
-    //$data = json_decode(file_get_contents("php://input"), true);
-    //echo $data;
-    //die();
+    // Validate required fields
+    if (empty($_POST['username']) || empty($_POST['register-email']) || 
+        empty($_POST['register-password']) || empty($_POST['register-name'])) {
+        echo json_encode(["success" => false, "mensaje" => "Todos los campos son requeridos"]);
+        exit();
+    }
 
-    $stmt = $conn->prepare("INSERT INTO users (email, password, fullname, username) VALUES (?, ?, ?, ?, ?)"); //TODO: change fullname to username
-    $stmt->bind_param("sssss", $_POST['register-email'], $_POST['register-password'], $_POST['register-name'], $_POST['register-name'], $_POST['register-username']);
+    // Connect to database
+    $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
+
+    if ($conn->connect_error) {
+        echo json_encode(["success" => false, "mensaje" => "Error de conexión: " . $conn->connect_error]);
+        exit();
+    }
+
+    // Hash the password for security
+    $hashed_password = password_hash($_POST['register-password'], PASSWORD_DEFAULT);
+
+    // Prepare and execute statement
+    $stmt = $conn->prepare("INSERT INTO users (email, password, fullname, username) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $_POST['register-email'], $hashed_password, $_POST['register-name'], $_POST['username']);
 
     if ($stmt->execute()) {
-        echo json_encode(["mensaje" => "Datos guardados correctamente"]);
-        die();
+        echo json_encode(["success" => true, "mensaje" => "Registro exitoso"]);
     } else {
-        echo json_encode(["mensaje" => "Error al guardar datos"]);
-        die();
+        // Check for duplicate entry
+        if ($conn->errno == 1062) {
+            echo json_encode(["success" => false, "mensaje" => "El email o usuario ya está registrado"]);
+        } else {
+            echo json_encode(["success" => false, "mensaje" => "Error al guardar: " . $stmt->error]);
+        }
     }
 
     $stmt->close();
     $conn->close();
+
 } catch (Exception $e) {
-    echo $e;
+    echo json_encode(["success" => false, "mensaje" => "Error del servidor: " . $e->getMessage()]);
 }
