@@ -1,7 +1,5 @@
 # Luke-s-House-Casa-Tranquila
 Proyecto de página de turismo.
-# Luke-s-House-Casa-Tranquila
-Proyecto de página de turismo.
 # Estructura del Proyecto
 
 
@@ -31,5 +29,5 @@ Proyecto de página de turismo.
 - Utiliza los formularios de contacto para enviar consultas o comentarios.
 
 ## Base de datos
-- **MySQL**: Para la gestión de la base de datos.
-- **phpMyAdmin**: Para la administración de la base de datos.
+**MySQL**: Para la gestión de la base de datos.
+**phpMyAdmin**: Para la administración de la base de datos.
