@@ -4,20 +4,19 @@ header('Content-Type: application/json');
 include('./includes/config.php');
 
 try {
-    // Check if form was submitted
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         echo json_encode(["success" => false, "mensaje" => "Método no permitido"]);
         exit();
     }
 
-    // Validate required fields
-    if (empty($_POST['username']) || empty($_POST['register-email']) || 
-        empty($_POST['register-password']) || empty($_POST['register-name'])) {
+    if (
+        empty($_POST['username']) || empty($_POST['register-email']) ||
+        empty($_POST['register-password']) || empty($_POST['register-name'])
+    ) {
         echo json_encode(["success" => false, "mensaje" => "Todos los campos son requeridos"]);
         exit();
     }
 
-    // Connect to database
     $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
     if ($conn->connect_error) {
@@ -25,17 +24,16 @@ try {
         exit();
     }
 
-    // Hash the password for security
+
     $hashed_password = password_hash($_POST['register-password'], PASSWORD_DEFAULT);
 
-    // Prepare and execute statement
+
     $stmt = $conn->prepare("INSERT INTO users (email, password, fullname, username) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssss", $_POST['register-email'], $hashed_password, $_POST['register-name'], $_POST['username']);
 
     if ($stmt->execute()) {
         echo json_encode(["success" => true, "mensaje" => "Registro exitoso"]);
     } else {
-        // Check for duplicate entry
         if ($conn->errno == 1062) {
             echo json_encode(["success" => false, "mensaje" => "El email o usuario ya está registrado"]);
         } else {
@@ -45,7 +43,6 @@ try {
 
     $stmt->close();
     $conn->close();
-
 } catch (Exception $e) {
     echo json_encode(["success" => false, "mensaje" => "Error del servidor: " . $e->getMessage()]);
 }
