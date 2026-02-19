@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Información</title>
-    <link rel="stylesheet" href="css/estilos_info.css">
+    <link rel="stylesheet" href="./Front/css/estilos_info.css">
 </head>
 
 <body>
@@ -15,18 +15,7 @@
     </header>
     <main>
         <div class="header">
-            <nav class="nav-menu" style="align-items: center;">
-                <a href="Galeria.html" class="nav-item" title="Galeria">🖼️Galería</a>
-                <a href="panel_de_acceso.html" class="nav-item" title="Panel de Control">🟩panel de acceso</a>
-                <a href="informacion.html" class="nav-item" title="Información">🗄️Información</a>
-                <a href="mailto:lucaszv2006@gmail.com" class="nav-item" align="center" title="Gmail">📧gmail</a>
-                <a href="tel:+50686787471" class="nav-item" title="Contacto">📞Contacto</a>
-                <a href="Terminos_y_condiciones.html" class="nav-item" title="Terminos y Condiciones">📝Terminos y
-                    condiciones</a>
-                <a href="Seleccion_de_metodo_de_pago.html" class="nav-item" title="Seleccion_de_metodo_de_pago">Metodo
-                    de pago</a>
-                <a href="index.html" class="nav-item">Inicio</a>
-            </nav>
+            <?php include './Back/PHP/includes/navbar_simple.php'; ?>
         </div>
         <div class="card" id="montanas">
             <div class="card-image"
@@ -133,19 +122,8 @@
             </fieldset>
             </section>
     </main>
-    <footer class="minimal-footer">
-        <div class="footer-content">
-            <p class="copyright">&copy; 2024 Luke's House Casa Tranquila. Todos los derechos reservados.</p>
-            <nav class="footer-nav-minimal">
-                <a href="tel:+50683256836">Contacto</a>
-                <span class="separator">|</span>
-                <a href="Terminos_y_condiciones.html">Términos</a>
-                <span class="separator">|</span>
-                <a href="informacion.html">Información</a>
-            </nav>
-        </div>
-    </footer>
-    <script src="./js/informacion.js"></script>
+    <?php include './Back/PHP/includes/footer.php'; ?>
+    <script src=".//Back/js/informacion.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,436 @@
+/**
+ * Estilos para el Sistema de Recomendaciones de IA
+ * Luke's House Casa Tranquila
+ */
+
+/* Widget de recomendaciones */
+.recommendation-widget {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin: 40px 0;
+}
+
+.widget-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.widget-header h2 {
+    font-size: 28px;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.widget-header p {
+    color: #718096;
+    font-size: 16px;
+}
+
+/* Formulario del widget */
+.widget-form {
+    max-width: 600px;
+    margin: 0 auto 32px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+}
+
+.checkbox-group label:hover {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"]:checked + label,
+.checkbox-group label:has(input:checked) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+}
+
+select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Grid de recomendaciones */
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+/* Tarjeta de recomendación */
+.recommendation-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.recommendation-image {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.difficulty-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+}
+
+.difficulty-badge.ninguna,
+.difficulty-badge.baja {
+    background: rgba(72, 187, 120, 0.9);
+    color: white;
+}
+
+.difficulty-badge.media {
+    background: rgba(237, 137, 54, 0.9);
+    color: white;
+}
+
+.difficulty-badge.alta {
+    background: rgba(245, 101, 101, 0.9);
+    color: white;
+}
+
+.recommendation-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.recommendation-content h3 {
+    font-size: 20px;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.recommendation-content .description {
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    flex: 1;
+}
+
+.ai-reason {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #4a5568;
+    margin-bottom: 12px;
+    border-left: 3px solid #667eea;
+}
+
+.ai-reason strong {
+    color: #667eea;
+}
+
+.recommendation-details {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.recommendation-details .detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #718096;
+}
+
+.recommendation-details .detail i {
+    color: #667eea;
+}
+
+.btn-more-info {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-more-info:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Loading state */
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+    font-size: 16px;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 12px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Sección de itinerario */
+.itinerary-container {
+    margin-top: 40px;
+}
+
+.itinerary-day {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.itinerary-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.itinerary-day-header h3 {
+    font-size: 22px;
+    color: #2d3748;
+}
+
+.day-theme {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.day-theme.aventura {
+    background: #fef5e7;
+    color: #d68910;
+}
+
+.day-theme.naturaleza {
+    background: #e8f8f5;
+    color: #16a085;
+}
+
+.day-theme.relajacion {
+    background: #ebf5fb;
+    color: #2874a6;
+}
+
+.itinerary-activities {
+    display: grid;
+    gap: 16px;
+}
+
+.itinerary-activity {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: #f7fafc;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.itinerary-activity:hover {
+    background: #edf2f7;
+}
+
+.activity-time {
+    font-weight: 600;
+    color: #667eea;
+    min-width: 80px;
+}
+
+.activity-info {
+    flex: 1;
+}
+
+.activity-info h4 {
+    color: #2d3748;
+    margin-bottom: 4px;
+}
+
+.activity-info p {
+    color: #718096;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .recommendation-widget {
+        padding: 24px 16px;
+    }
+    
+    .widget-header h2 {
+        font-size: 24px;
+    }
+    
+    .checkbox-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .recommendations-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .recommendation-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .recommendation-widget {
+        padding: 20px 12px;
+        border-radius: 12px;
+    }
+    
+    .widget-header h2 {
+        font-size: 20px;
+    }
+    
+    .recommendation-image {
+        height: 160px;
+    }
+    
+    .recommendation-content {
+        padding: 16px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recommendation-card {
+    animation: fadeInUp 0.5s ease;
+}
+
+.recommendation-card:nth-child(1) { animation-delay: 0.1s; }
+.recommendation-card:nth-child(2) { animation-delay: 0.2s; }
+.recommendation-card:nth-child(3) { animation-delay: 0.3s; }
+.recommendation-card:nth-child(4) { animation-delay: 0.4s; }
+.recommendation-card:nth-child(5) { animation-delay: 0.5s; }
+.recommendation-card:nth-child(6) { animation-delay: 0.6s; }

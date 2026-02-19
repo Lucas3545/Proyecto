@@ -3,11 +3,24 @@ document.addEventListener("DOMContentLoaded", function () {
   botonReservar.addEventListener("click", redirigir);
   botonReservar.addEventListener("touchstart", redirigir);
 
+  const chatbotShortcut = document.getElementById('chatbot-shortcut');
+  if (chatbotShortcut) {
+    chatbotShortcut.addEventListener('click', function(e) {
+      e.preventDefault();
+      const chatbotToggle = document.getElementById('chatbot-toggle');
+      if (chatbotToggle) {
+        chatbotToggle.click();
+      }
+    });
+  }
+
   const menuBtn = document.getElementById('menuBtn');
   const radialMenu = document.getElementById('radialMenu');
-  menuBtn.onclick = function() {
-      radialMenu.classList.toggle('open');
-  };
+  if (menuBtn && radialMenu) {
+    menuBtn.onclick = function() {
+        radialMenu.classList.toggle('open');
+    };
+  }
   
   document.addEventListener('click', function(e) {
       if (!radialMenu.contains(e.target)) {

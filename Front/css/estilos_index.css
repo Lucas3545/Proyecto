@@ -247,6 +247,24 @@ body {
     }
 }
 
+#chatbot-shortcut {
+    position: relative;
+    color: var(--primary-blue);
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+#chatbot-shortcut:hover {
+    color: var(--forest-green);
+    transform: scale(1.2);
+    animation: none;
+}
+
+#chatbot-shortcut i {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
 /* Minimalist Footer */
 .minimal-footer {
     background-color: #1a1a1a;

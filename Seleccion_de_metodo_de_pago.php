@@ -5,23 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="./img/logo de luke's huse casa tranquila.webp">
-    <link rel="stylesheet" href="./css/Seleccion_de_metodo_de_pago.css">
+    <link rel="stylesheet" href="./Front/css/Seleccion_de_metodo_de_pago.css">
     <title>Metodo de Pago</title>
 </head>
 
 <body class="contenedor">
 
     <div class="header">
-        <nav class="nav-menu">
-            <a href="Galeria.html" class="nav-item" title="Galeria">🖼️</a>
-            <a href="panel de acceso.html" class="nav-item" title="Panel de Control">🟩</a>
-            <a href="informacion.html" class="nav-item" title="Información">🗄️</a>
-            <a href="mailto:lucaszv2006@gmail.com" class="nav-item" title="Gmail">📧</a>
-            <a href="tel:+50686787471" class="nav-item" title="Contacto">📞</a>
-            <a href="Terminos_y_condiciones.html" class="nav-item" title="Terminos y Condiciones">📝</a>
-            <a href="Seleccion_de_metodo_de_pago.html" class="nav-item" title="Seleccion_de_metodo_de_pago">💳</a>
-            <a href="index.html" class="nav-item">Inicio</a>
-        </nav>
+        <?php include './Front/PHP/includes/navbar_simple.php'; ?>
     </div>
 
     <h3 class="titulo_principal">Nueva reserva</h3>
@@ -74,7 +65,7 @@
 
     <div class="panel_interectivo_tarjeta" id="blkTarjeta">
         <h4>Ingresá los datos de tu tarjeta</h4>
-        <form id="formTarjeta" action="../PHP/procesar_tarjeta.php" method="POST">
+        <form id="formTarjeta" action="./PHP/procesar_tarjeta.php" method="POST">
             <br>
             <label for="txtNombre">Nombre en la tarjeta:</label>
             <input type="text" id="txtNombre" placeholder="Nombre completo" name="register-nombre">
@@ -115,18 +106,7 @@
     </div>
     <script src="./js/Seleccion_de_metodo_de_pago.js"></script>
 
-    <footer class="minimal-footer">
-        <div class="footer-content">
-            <p class="copyright">&copy; 2024 Luke's House Casa Tranquila. Todos los derechos reservados.</p>
-            <nav class="footer-nav-minimal">
-                <a href="tel:+50683256836">Contacto</a>
-                <span class="separator">|</span>
-                <a href="Terminos_y_condiciones.html">Términos</a>
-                <span class="separator">|</span>
-                <a href="informacion.html">Información</a>
-            </nav>
-        </div>
-    </footer>
+    <?php include './Front/PHP/includes/footer.php'; ?>
 </body>
 
 </html>

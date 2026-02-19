@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="./css/estilos_panes.css" />
+<link rel="stylesheet" href="./Front/css/estilos_panes.css" />
 <title>Panel de Registro e Inicio de Sesión con Botón</title>
 
 </head>
@@ -11,20 +11,20 @@
 <header class="container-xl">
         <details>
     <summary>&#9776;</summary>
-        <li><a href="index.html" class="nav-item" title="Inicio">⏪Inicio</a></li>
-        <li><a href="informacion.html" class="nav-item" title="Información">🗄️Información</a></li>
+        <li><a href="index.php" class="nav-item" title="Inicio">⏪Inicio</a></li>
+        <li><a href="informacion.php" class="nav-item" title="Información">🗄️Información</a></li>
         <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">📧gmail</a></li>
         <li><a href="tel:+50683256836" class="nav-item" title="Contacto">📞Contacto</a></li>
-        <li><a href="Terminos_y_condiciones.html" class="nav-item" title="Terminos y Condiciones">📝Terminos y condiciones</a></li>
+        <li><a href="Terminos_y_condiciones.php" class="nav-item" title="Terminos y Condiciones">📝Terminos y condiciones</a></li>
 </details>
 </header>
 <main>
   <nav class="footer-nav">
-        <a class="nav-item-footer" href="index.html">Inicio</a>
-        <a class="nav-item-footer" href="informacion.html">Información</a>
+        <a class="nav-item-footer" href="index.php">Inicio</a>
+        <a class="nav-item-footer" href="informacion.php">Información</a>
         <a class="nav-item-footer" href="mailto:lucaszv2006@gmail.com">📧gmail</a>
         <a class="nav-item-footer" href="tel:+50683256836">📞Contacto</a>
-        <a class="nav-item-footer" href="Terminos_y_condiciones.html">📝Terminos y condiciones</a>
+        <a class="nav-item-footer" href="Terminos_y_condiciones.php">📝Terminos y condiciones</a>
     </nav>
     <h1 class="titulo-principal">Panel de Acceso</h1>
   <p class="subtitle">Inicia sesión o regístrate para acceder a funciones exclusivas</p>
@@ -62,18 +62,7 @@
   </div>
 </main>
 
-<footer class="minimal-footer">
-    <div class="footer-content">
-        <p class="copyright">&copy; 2024 Luke's House Casa Tranquila. Todos los derechos reservados.</p>
-        <nav class="footer-nav-minimal">
-            <a href="tel:+50683256836">Contacto</a>
-            <span class="separator">|</span>
-            <a href="Terminos_y_condiciones.html">Términos</a>
-            <span class="separator">|</span>
-            <a href="informacion.html">Información</a>
-        </nav>
-    </div>
-</footer>
+<?php include './Back/PHP/includes/footer.php'; ?>
 
 <script src="./js/panel_de_acceso.js">alert(909090)</script>
 </body>
