@@ -32,3 +32,5 @@ CREATE TABLE `lukes`.`reservations` (
   UNIQUE INDEX `idx_fecha` (`fecha`),
   INDEX `idx_email_reserva` (`email`)
 ) COMMENT 'Tabla de reservas del calendario';
+
+CREATE TABLE `lukes`.`Chatbot` 

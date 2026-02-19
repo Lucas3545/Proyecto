@@ -1,7 +1,9 @@
 class AIRecommendations {
-    constructor(apiKey) {
+    constructor(apiKey, options = {}) {
         this.apiKey = apiKey;
         this.apiEndpoint = 'https://api.openai.com/v1/chat/completions';
+        this.dbEndpoint = options.dbEndpoint || window.RECOMMENDATIONS_API_ENDPOINT || './back/PHP/recomendaciones_data.php';
+        this.dbContext = null;
         
         this.attractions = {
             aventura: [
@@ -93,6 +95,59 @@ class AIRecommendations {
                 }
             ]
         };
+    }
+
+    async loadDatabaseContext(forceReload = false) {
+        if (this.dbContext && !forceReload) {
+            return this.dbContext;
+        }
+
+        try {
+            const response = await fetch(this.dbEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                cache: 'no-store'
+            });
+
+            if (!response.ok) {
+                throw new Error(`DB API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(data.error || 'Respuesta invalida de la API');
+            }
+
+            this.dbContext = data;
+            return this.dbContext;
+        } catch (error) {
+            console.error('Error al cargar datos de base de datos:', error);
+            return null;
+        }
+    }
+
+    renderDatabaseSummary(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!this.dbContext || !this.dbContext.stats) {
+            container.innerHTML = '<p class="db-context-error">No se pudieron cargar datos en tiempo real.</p>';
+            return;
+        }
+
+        const stats = this.dbContext.stats;
+        const reservations = Array.isArray(this.dbContext.nextReservations) ? this.dbContext.nextReservations : [];
+
+        container.innerHTML = `
+            <div class="db-context-summary">
+                <p><strong>Base de datos conectada:</strong> ${stats.users} usuarios, ${stats.reservations} reservas, ${stats.cards} tarjetas.</p>
+                ${reservations.length > 0
+                    ? `<p><strong>Proxima reserva:</strong> ${reservations[0].nombre} - ${reservations[0].fecha}</p>`
+                    : '<p><strong>Proximas reservas:</strong> no hay registros futuros.</p>'}
+            </div>
+        `;
     }
     
     async getPersonalizedRecommendations(preferences) {
@@ -326,6 +381,7 @@ Responde en formato JSON con este estructura:
                 <h2>🎯 Encuentra tu Aventura Perfecta</h2>
                 <p>Déjanos ayudarte a planificar tu visita</p>
             </div>
+            <div id="recommendations-db-context" class="db-context-inline"></div>
             <div class="widget-form">
                 <div class="form-group">
                     <label>¿Qué te interesa?</label>
@@ -357,9 +413,16 @@ Responde en formato JSON con este estructura:
         document.getElementById('get-recommendations-btn').addEventListener('click', () => {
             this.handleRecommendationRequest();
         });
+
+        this.loadDatabaseContext().then(() => {
+            this.renderDatabaseSummary('recommendations-db-context');
+        });
     }
     
     async handleRecommendationRequest() {
+        await this.loadDatabaseContext();
+        this.renderDatabaseSummary('recommendations-db-context');
+
         const interests = Array.from(document.querySelectorAll('input[name="interest"]:checked'))
             .map(cb => cb.value);
         

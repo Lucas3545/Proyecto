@@ -1,4 +1,70 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/back/PHP/includes/config.php';
+
+$dbError = null;
+$dbStats = [
+    'users' => 0,
+    'reservations' => 0,
+    'cards' => 0,
+];
+$nextReservations = [];
+
+try {
+    $dbHost = $DB_CONSUSLT ?? $DB_CONSULT ?? $DB_HOSTNAME;
+    $dbName = $DB_TEXT ?? $DB_NAME;
+    $dbPass = $D_ANSWER ?? $DB_ANSWER ?? $DB_PASSWORD;
+    $dbUser = $DB_USERNAME ?? 'root';
+
+    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+
+    if ($conn->connect_error) {
+        throw new RuntimeException('Error de conexion: ' . $conn->connect_error);
+    }
+
+    $conn->set_charset('utf8mb4');
+
+    $usersResult = $conn->query('SELECT COUNT(*) AS total FROM users');
+    if ($usersResult && $row = $usersResult->fetch_assoc()) {
+        $dbStats['users'] = (int) $row['total'];
+    }
+
+    $reservationsResult = $conn->query('SELECT COUNT(*) AS total FROM reservations');
+    if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
+        $dbStats['reservations'] = (int) $row['total'];
+    }
+
+    $cardsResult = $conn->query('SELECT COUNT(*) AS total FROM cards');
+    if ($cardsResult && $row = $cardsResult->fetch_assoc()) {
+        $dbStats['cards'] = (int) $row['total'];
+    }
+
+    $nextReservationsQuery = "
+        SELECT nombre, fecha, estado
+        FROM reservations
+        WHERE fecha >= CURDATE()
+        ORDER BY fecha ASC
+        LIMIT 5
+    ";
+
+    $nextReservationsResult = $conn->query($nextReservationsQuery);
+    if ($nextReservationsResult) {
+        while ($reservation = $nextReservationsResult->fetch_assoc()) {
+            $nextReservations[] = $reservation;
+        }
+    }
+
+    $conn->close();
+} catch (Throwable $e) {
+    $dbError = $e->getMessage();
+}
+
+?>
+<!DOCTYPE html>
+
+<script>
+  window.RECOMMENDATIONS_API_ENDPOINT = './back/PHP/recomendaciones_data.php';
+</script>
+
 <html lang="es">
 
 <head>
@@ -89,6 +155,90 @@
             color: #718096;
             line-height: 1.6;
         }
+
+        .db-panel {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .db-panel h2 {
+            color: #2d3748;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .db-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .db-stat {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #edf2f7;
+        }
+
+        .db-stat strong {
+            color: #4a5568;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .db-stat span {
+            font-size: 26px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .reservation-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        .reservation-list li {
+            background: white;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+        }
+
+        .db-error {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 10px;
+            color: #c53030;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+        }
+
+        .db-context-inline {
+            background: #edf2f7;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #2d3748;
+            font-size: 14px;
+            margin: 0 0 16px 0;
+            padding: 10px 12px;
+        }
+
+        .db-context-inline p {
+            margin: 4px 0;
+        }
+
+        .db-context-error {
+            color: #c53030;
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -98,8 +248,8 @@
             <div class="logo">Luke's House</div>
             <ul class="nav-links">
                 <li><a class="navbar-link" href="index.php">Inicio</a></li>
-                <li><a class="navbar-link" href="informacion.php">InformaciÃ³n</a></li>
-                <li><a class="navbar-link" href="Galeria.php">GalerÃ­a</a></li>
+                <li><a class="navbar-link" href="informacion.php">Informacion</a></li>
+                <li><a class="navbar-link" href="Galeria.php">Galeri­a</a></li>
                 <li><a class="navbar-link" href="Calendario.php">Reservar</a></li>
                 <li><a class="navbar-link" href="recomendaciones.php" id="chatbot-shortcut" title="Chat de Ayuda"><i class="fas fa-comments"></i></a></li>
             </ul>
@@ -117,6 +267,46 @@
             Volver al Inicio
         </a>
 
+        <?php if ($dbError !== null): ?>
+            <div class="db-error">
+                No se pudo conectar a la base de datos <strong><?= htmlspecialchars($dbName, ENT_QUOTES, 'UTF-8'); ?></strong>.
+                Detalle: <?= htmlspecialchars($dbError, ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+        <?php else: ?>
+            <section class="db-panel">
+                <h2>Datos en tiempo real desde MySQL</h2>
+                <div class="db-stats">
+                    <article class="db-stat">
+                        <strong>Usuarios registrados</strong>
+                        <span><?= $dbStats['users']; ?></span>
+                    </article>
+                    <article class="db-stat">
+                        <strong>Reservas totales</strong>
+                        <span><?= $dbStats['reservations']; ?></span>
+                    </article>
+                    <article class="db-stat">
+                        <strong>Tarjetas guardadas</strong>
+                        <span><?= $dbStats['cards']; ?></span>
+                    </article>
+                </div>
+
+                <h3>Próximas reservas</h3>
+                <?php if (count($nextReservations) > 0): ?>
+                    <ul class="reservation-list">
+                        <?php foreach ($nextReservations as $reservation): ?>
+                            <li>
+                                <strong><?= htmlspecialchars($reservation['nombre'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                                - <?= htmlspecialchars($reservation['fecha'], ENT_QUOTES, 'UTF-8'); ?>
+                                (<?= htmlspecialchars($reservation['estado'], ENT_QUOTES, 'UTF-8'); ?>)
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>No hay reservas futuras registradas.</p>
+                <?php endif; ?>
+            </section>
+        <?php endif; ?>
+
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon"></div>
@@ -131,20 +321,23 @@
             <div class="feature-card">
                 <div class="feature-icon"></div>
                 <h3>Itinerarios Completos</h3>
-                <p>Planifica tu viaje completo con recomendaciones dÃ­a por dÃ­a</p>
+                <p>Planifica tu viaje completo con recomendaciones dia por dia</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon"></div>
                 <h3>Consejos Locales</h3>
-                <p>InformaciÃ³n actualizada sobre las mejores atracciones de La Fortuna</p>
+                <p>Informacion actualizada sobre las mejores atracciones de La Fortuna</p>
             </div>
         </div>
 
         <div id="recommendations-widget"></div>
     </div>
 
-    <?php include './Back/PHP/includes/footer.php'; ?>
+    <?php include './back/PHP/includes/footer.php'; ?>
 
+    <script>
+        window.RECOMMENDATIONS_API_ENDPOINT = './back/PHP/recomendaciones_data.php';
+    </script>
     <script src="./back/PHP/js/ai-chatbot.js"></script>
     <script src="./back/PHP/js/ai-recommendations.js"></script>
     <script src="./back/PHP/js/ai-config.js"></script>
@@ -156,7 +349,7 @@
             } else {
                 console.error('Sistema de recomendaciones no disponible');
             }
-            
+
             const chatbotShortcut = document.getElementById('chatbot-shortcut');
             if (chatbotShortcut) {
                 chatbotShortcut.addEventListener('click', function(e) {
@@ -172,4 +365,3 @@
 </body>
 
 </html>
-

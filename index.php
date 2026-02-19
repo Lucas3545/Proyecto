@@ -20,8 +20,8 @@
             <div class="logo">Luke's House</div>
             <ul class="nav-links">
                 <li><a class="navbar-link" href="index.php">Inicio</a></li>
-                <li><a class="navbar-link" href="informacion.php">InformaciÃ³n</a></li>
-                <li><a class="navbar-link" href="Galeria.php">GalerÃ­a</a></li>
+                <li><a class="navbar-link" href="informacion.php">Informacion</a></li>
+                <li><a class="navbar-link" href="Galeria.php">Galeri­a</a></li>
                 <li><a class="navbar-link" href="Calendario.php">Reservar</a></li>
                 <li><a class="navbar-link" href="recomendaciones.php" id="chatbot-shortcut" title="Chat de Ayuda"><i class="fas fa-comments"></i></a></li>
             </ul>
@@ -35,7 +35,7 @@
     </header>
     <main class="container">
         <div class="principal-card">
-            <div class="card-image" style="background-image: url(./img/CabaÃ±ita/_DSC1273.jpg);"></div>
+            <div class="card-image" style="background-image: url(./img/Cabañita/_DSC1270.jpg);"></div>
             <div class="card-content">
                 <h2 class="card-title">Welcome to Luke's Tiny House</h2>
                 <p class="card-description">Disfruta una estancia Ãºnica; patio de 1 acre visitado por perezosos,
@@ -51,7 +51,7 @@
 
         <section>
             <div class="banner"
-                style="background-image: url(./img/Fortuna/aldea-la-fortuna-costa-rica-vista-aÃ©rea-de-ciudad-y-iglesia-en-plaza-parque-central-167023541.webp);">
+                style="background-image: url(./img/Fortuna/aldea-la-fortuna-costa-rica-vista-aérea-de-ciudad-y-iglesia-en-plaza-parque-central-167023541.webp);">
             </div>
             <h2>Lugares a Visitar en La Fortuna</h2>
             <p>Descubre la belleza natural y las actividades emocionantes que La Fortuna tiene para ofrecer.</p>
@@ -63,8 +63,8 @@
                     entorno natural Ãºnico.</div>
             </div>
             <div class="info-card">
-                <div class="info-title">RÃ­o Celeste</div>
-                <article class="info-desc">Descubre el rÃ­o de color turquesa y disfruta de senderismo en el Parque
+                <div class="info-title">Ri­o Celeste</div>
+                <article class="info-desc">Descubre el ri­o de color turquesa y disfruta de senderismo en el Parque
                     Nacional VolcÃ¡n Tenorio.</article>
             </div>
             <div class="info-card">
@@ -74,7 +74,7 @@
             </div>
             <div class="info-card">
                 <div class="info-title">La Fortuna</div>
-                <article class="info-desc">Pueblo tranquilo, volcÃ¡n Arenal y actividades turÃ­sticas para todos los
+                <article class="info-desc">Pueblo tranquilo, volcÃ¡n Arenal y actividades turi­sticas para todos los
                     gustos.</article>
             </div>
             <div class="info-card">
@@ -89,7 +89,7 @@
             </div>
             <div class="info-card">
                 <div class="info-title">Parque Nacional Manuel Antonio</div>
-                <article class="info-desc">Disfruta de playas paradisÃ­acas y una rica biodiversidad en uno de los
+                <article class="info-desc">Disfruta de playas paradisi­acas y una rica biodiversidad en uno de los
                     parques mÃ¡s visitados.</article>
             </div>
         </section>

