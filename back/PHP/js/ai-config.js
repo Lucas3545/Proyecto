@@ -1,5 +1,5 @@
 const AI_CONFIG = {
-    OPENAI_API_KEY: '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',
+    OPENAI_API_KEY: 'OPENAI_API_KEY',
     MODEL: 'gpt-3.5-turbo',
 
     CHATBOT: {
