@@ -14,7 +14,7 @@ pago.addEventListener("change", () => {
         case "tarjeta":
             tarjeta.classList.remove("oculto");
             break;
-        case "Transferencia":
+        case "transferencia":
             transferencia.classList.remove("oculto");
             break;
         case "efectivo":
@@ -28,20 +28,8 @@ pago.addEventListener("change", () => {
 
 const formularioTarjeta = document.getElementById("formTarjeta");
 
-formularioTarjeta.addEventListener("submit", (e) => {
-    e.preventDefault();
-    console.log("Formulario de tarjeta enviado");
-    formularioTarjeta.submit();
-});
-
-transferencia.addEventListener("input", () => {
-    console.log("Datos de transferencia ingresados");
-});
-
-efectivo.addEventListener("input", () => {
-    console.log("Datos de efectivo ingresados");
-});
-
-paypal.addEventListener("input", () => {
-    console.log("Datos de PayPal ingresados");
-});
+if (formularioTarjeta) {
+    formularioTarjeta.addEventListener("submit", () => {
+        console.log("Formulario de tarjeta enviado");
+    });
+}

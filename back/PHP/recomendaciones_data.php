@@ -51,6 +51,25 @@ function has_columns(mysqli $conn, string $tableName, array $columns): bool {
     return true;
 }
 
+function create_cards_table(mysqli $conn): bool {
+    $sql = "
+        CREATE TABLE IF NOT EXISTS `cards` (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `numero` VARCHAR(20) NOT NULL,
+            `nombre_tarjeta` VARCHAR(100) NOT NULL,
+            `vencimiento` VARCHAR(7) NOT NULL,
+            `cvv` VARCHAR(4) NOT NULL,
+            `banco` VARCHAR(50) NULL,
+            `red_de_pago` VARCHAR(20) NULL,
+            `email_usuario` VARCHAR(100) NULL,
+            `fecha_registro` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            KEY `idx_cards_email` (`email_usuario`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ";
+    return (bool) $conn->query($sql);
+}
+
 try {
     $dbHost = $DB_CONSUSLT ?? $DB_CONSULT ?? $DB_HOSTNAME;
     $dbName = $DB_TEXT ?? $DB_NAME;
@@ -67,6 +86,9 @@ try {
     $usersTable = first_existing_table($conn, ['users']);
     $reservationsTable = first_existing_table($conn, ['reservations', 'reservas']);
     $cardsTable = first_existing_table($conn, ['cards', 'ValidacionTarjetas', 'tarjetas']);
+    if ($cardsTable === null && create_cards_table($conn)) {
+        $cardsTable = 'cards';
+    }
 
     if ($usersTable !== null) {
         $usersResult = $conn->query("SELECT COUNT(*) AS total FROM `{$usersTable}`");
@@ -92,7 +114,7 @@ try {
             $response['stats']['cards'] = (int) $row['total'];
         }
     } else {
-        $response['warnings'][] = "No existe una tabla de tarjetas (cards/ValidacionTarjetas/tarjetas).";
+        $response['warnings'][] = "No existe una tabla de tarjetas (cards/ValidacionTarjetas/tarjetas) y no se pudo crear automaticamente.";
     }
 
     if ($reservationsTable !== null && has_columns($conn, $reservationsTable, ['nombre', 'fecha'])) {

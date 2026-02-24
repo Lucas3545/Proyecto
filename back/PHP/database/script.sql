@@ -33,4 +33,29 @@ CREATE TABLE `lukes`.`reservations` (
   INDEX `idx_email_reserva` (`email`)
 ) COMMENT 'Tabla de reservas del calendario';
 
-CREATE TABLE `lukes`.`Chatbot` 
+CREATE TABLE `lukes`.`Chatbot` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `session_id` VARCHAR(100) NOT NULL,
+  `email_usuario` VARCHAR(45) NULL,
+  `rol` ENUM('system', 'user', 'assistant') NOT NULL,
+  `mensaje` TEXT NOT NULL,
+  `modelo` VARCHAR(60) NULL,
+  `fecha_registro` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_chatbot_session` (`session_id`),
+  KEY `idx_chatbot_email` (`email_usuario`),
+  KEY `idx_chatbot_fecha` (`fecha_registro`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Historial de mensajes del chatbot';
+
+CREATE TABLE `lukes`.`reservas` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `fecha` DATE NOT NULL,
+  `nombre` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `estado` ENUM('confirmada', 'cancelada') NOT NULL DEFAULT 'confirmada',
+  `fecha_registro` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_reservas_fecha` (`fecha`),
+  KEY `idx_reservas_email` (`email`),
+  KEY `idx_reservas_estado` (`estado`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

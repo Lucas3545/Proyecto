@@ -12,6 +12,31 @@ function table_exists(mysqli $conn, string $tableName): bool {
     return $result instanceof mysqli_result && $result->num_rows > 0;
 }
 
+function has_column(mysqli $conn, string $tableName, string $columnName): bool {
+    $safeTable = str_replace('`', '``', $tableName);
+    $safeColumn = $conn->real_escape_string($columnName);
+    $result = $conn->query("SHOW COLUMNS FROM `{$safeTable}` LIKE '{$safeColumn}'");
+    return $result instanceof mysqli_result && $result->num_rows > 0;
+}
+
+function create_reservations_table(mysqli $conn): bool {
+    $sql = "
+        CREATE TABLE IF NOT EXISTS `reservations` (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `fecha` DATE NOT NULL,
+            `nombre` VARCHAR(100) NOT NULL,
+            `email` VARCHAR(100) NOT NULL,
+            `estado` ENUM('confirmada', 'cancelada') NOT NULL DEFAULT 'confirmada',
+            `fecha_registro` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `uniq_reservations_fecha` (`fecha`),
+            KEY `idx_reservations_email` (`email`),
+            KEY `idx_reservations_estado` (`estado`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ";
+    return (bool) $conn->query($sql);
+}
+
 $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
 if ($conn->connect_error) {
@@ -29,22 +54,33 @@ if (table_exists($conn, 'reservations')) {
 }
 
 if ($reservationsTable === null) {
-    echo json_encode(['success' => false, 'message' => "No existe la tabla de reservas (reservations/reservas)"]);
-    $conn->close();
-    exit;
+    if (create_reservations_table($conn)) {
+        $reservationsTable = 'reservations';
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => "No existe la tabla de reservas (reservations/reservas) y no se pudo crear: " . $conn->error
+        ]);
+        $conn->close();
+        exit;
+    }
 }
+
+$hasEstadoColumn = has_column($conn, $reservationsTable, 'estado');
 
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
     $mes = isset($_GET['mes']) ? intval($_GET['mes']) : null;
     $anio = isset($_GET['anio']) ? intval($_GET['anio']) : null;
+    $estadoFilter = $hasEstadoColumn ? " AND estado = 'confirmada'" : "";
 
     if ($mes !== null && $anio !== null) {
-        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable} WHERE MONTH(fecha) = ? AND YEAR(fecha) = ? AND estado = 'confirmada'");
+        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable} WHERE MONTH(fecha) = ? AND YEAR(fecha) = ?{$estadoFilter}");
         $stmt->bind_param('ii', $mes, $anio);
     } else {
-        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable} WHERE estado = 'confirmada'");
+        $baseWhere = $hasEstadoColumn ? " WHERE estado = 'confirmada'" : "";
+        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable}{$baseWhere}");
     }
 
     if (!$stmt) {
@@ -87,7 +123,10 @@ if ($method === 'GET') {
         exit;
     }
 
-    $check = $conn->prepare("SELECT id FROM {$reservationsTable} WHERE fecha = ? AND estado = 'confirmada'");
+    $dateCheckQuery = $hasEstadoColumn
+        ? "SELECT 1 FROM {$reservationsTable} WHERE fecha = ? AND estado = 'confirmada'"
+        : "SELECT 1 FROM {$reservationsTable} WHERE fecha = ?";
+    $check = $conn->prepare($dateCheckQuery);
     if (!$check) {
         echo json_encode(['success' => false, 'message' => 'Error al validar disponibilidad: ' . $conn->error]);
         $conn->close();

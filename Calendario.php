@@ -16,12 +16,12 @@
     <main>
         <details>
             <summary>&#9776;</summary>
-            <li><a href="index.php" class="nav-item" title="Inicio">âªInicio</a></li>
-            <li><a href="panel_de_acceso.php" class="nav-item" title="Panel de Control">ðŸŸ©Panel de Acceso</a></li>
-            <li><a href="informacion.php" class="nav-item" title="InformaciÃ³n">ðŸ—„ï¸InformaciÃ³n</a></li>
-            <li><a href="Galeria.php" class="nav-item" title="Galeria">ðŸ–¼ï¸Galeria</a></li>
-            <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">ðŸ“§gmail</a></li>
-            <li><a href="tel:+50683256836" class="nav-item" title="Contacto">ðŸ“žContacto</a></li>
+            <li><a href="index.php" class="nav-item" title="Inicio">Inicio</a></li>
+            <li><a href="panel_de_acceso.php" class="nav-item" title="Panel de Control">Panel de Acceso</a></li>
+            <li><a href="informacion.php" class="nav-item" title="InformaciÃ³n">Informacion</a></li>
+            <li><a href="Galeria.php" class="nav-item" title="Galeria">Galeria</a></li>
+            <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">gmail</a></li>
+            <li><a href="tel:+50683256836" class="nav-item" title="Contacto">Contacto</a></li>
 
         </details>
         <div class="calendar-container">
@@ -38,7 +38,7 @@
                 <input type="text" id="nombre" placeholder="Tu nombre" required>
                 <input type="email" id="email" placeholder="Tu correo" required>
                 <button id="confirmReservation">Confirmar Reserva</button>
-                
+                <div class="success-message" id="successMsg" style="display:none;">Reserva realizada con exito</div>
             </div>
         </div>
     </main>
@@ -60,6 +60,9 @@
         async function cargarReservas(month, year) {
             try {
                 const response = await fetch(`${API_URL}?mes=${month + 1}&anio=${year}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
                 const data = await response.json();
                 if (data.success) {
                     unavailableDates = data.reservas.map(r => r.fecha);
@@ -151,7 +154,7 @@
                         body: JSON.stringify({ fecha: selectedDate, nombre, email })
                     });
                     if (!response.ok) {
-                        throw new Error(HTTP );
+                        throw new Error(`HTTP ${response.status}`);
                     }
                     const data = await response.json();
                     if (data.success) {
