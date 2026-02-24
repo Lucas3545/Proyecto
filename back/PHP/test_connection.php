@@ -1,5 +1,4 @@
 <?php
-// Test database connection
 include('./includes/config.php');
 
 echo "<h2>Testing Database Connection</h2>";
@@ -8,7 +7,7 @@ try {
     $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
     
     if ($conn->connect_error) {
-        echo "<p style='color: red;'>❌ Connection failed: " . $conn->connect_error . "</p>";
+        echo "<p style='color: red;'> Connection failed: " . $conn->connect_error . "</p>";
         echo "<p><strong>Check:</strong></p>";
         echo "<ul>";
         echo "<li>Is MAMP running?</li>";
@@ -21,12 +20,10 @@ try {
     
     echo "<p style='color: green;'>✅ Connected successfully to database: <strong>" . $DB_NAME . "</strong></p>";
     
-    // Check if users table exists
     $result = $conn->query("SHOW TABLES LIKE 'users'");
     if ($result->num_rows > 0) {
         echo "<p style='color: green;'>✅ Table 'users' exists</p>";
         
-        // Check table structure
         $columns = $conn->query("DESCRIBE users");
         echo "<h3>Table Structure:</h3><ul>";
         while ($row = $columns->fetch_assoc()) {

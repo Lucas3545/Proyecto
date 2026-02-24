@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -16,12 +16,12 @@
     <main>
         <details>
             <summary>&#9776;</summary>
-            <li><a href="index.php" class="nav-item" title="Inicio">⏪Inicio</a></li>
-            <li><a href="panel_de_acceso.php" class="nav-item" title="Panel de Control">🟩Panel de Acceso</a></li>
-            <li><a href="informacion.php" class="nav-item" title="Información">🗄️Información</a></li>
-            <li><a href="Galeria.php" class="nav-item" title="Galeria">🖼️Galeria</a></li>
-            <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">📧gmail</a></li>
-            <li><a href="tel:+50683256836" class="nav-item" title="Contacto">📞Contacto</a></li>
+            <li><a href="index.php" class="nav-item" title="Inicio">âªInicio</a></li>
+            <li><a href="panel_de_acceso.php" class="nav-item" title="Panel de Control">ðŸŸ©Panel de Acceso</a></li>
+            <li><a href="informacion.php" class="nav-item" title="InformaciÃ³n">ðŸ—„ï¸InformaciÃ³n</a></li>
+            <li><a href="Galeria.php" class="nav-item" title="Galeria">ðŸ–¼ï¸Galeria</a></li>
+            <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">ðŸ“§gmail</a></li>
+            <li><a href="tel:+50683256836" class="nav-item" title="Contacto">ðŸ“žContacto</a></li>
 
         </details>
         <div class="calendar-container">
@@ -38,9 +38,11 @@
                 <input type="text" id="nombre" placeholder="Tu nombre" required>
                 <input type="email" id="email" placeholder="Tu correo" required>
                 <button id="confirmReservation">Confirmar Reserva</button>
-                <div class="success-message" id="successMsg" style="display:none;">¡Reserva realizada con éxito!</div>
+                
+            </div>
+        </div>
     </main>
-    <?php include './Front/PHP/includes/footer.php'; ?>
+    <?php include './back/PHP/includes/footer.php'; ?>
     <script>
         let unavailableDates = [];
         let selectedCell = null;
@@ -48,7 +50,7 @@
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
 
-        const API_URL = './PHP/reservas.php';
+        const API_URL = './back/PHP/reservas.php';
 
         const monthNames = [
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -61,6 +63,8 @@
                 const data = await response.json();
                 if (data.success) {
                     unavailableDates = data.reservas.map(r => r.fecha);
+                } else {
+                    throw new Error(data.message || 'No se pudieron cargar las reservas');
                 }
             } catch (error) {
                 console.error('Error al cargar reservas:', error);
@@ -76,7 +80,7 @@
             daysGrid.innerHTML = '';
             calendarGrid.innerHTML = '';
 
-            const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const days = ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b'];
             days.forEach(d => {
                 const dayDiv = document.createElement('div');
                 dayDiv.className = 'calendar-day';
@@ -146,6 +150,9 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ fecha: selectedDate, nombre, email })
                     });
+                    if (!response.ok) {
+                        throw new Error(HTTP );
+                    }
                     const data = await response.json();
                     if (data.success) {
                         await renderCalendar(currentMonth, currentYear);
@@ -158,7 +165,7 @@
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error de conexión al servidor');
+                    alert(error.message || 'Error de conexión al servidor');
                 }
             }
         };
@@ -168,3 +175,4 @@
 </body>
 
 </html>
+

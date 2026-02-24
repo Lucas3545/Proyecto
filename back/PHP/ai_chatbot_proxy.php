@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 header('Content-Type: application/json; charset=utf-8');
 
 function json_error($message, $statusCode = 400) {
@@ -31,6 +31,17 @@ if (!is_array($messages) || count($messages) === 0) {
 }
 
 $apiKey = getenv('OPENAI_API_KEY');
+
+if (!$apiKey) {
+    $configPath = __DIR__ . '/includes/config.php';
+    if (is_file($configPath)) {
+        require $configPath;
+        if (isset($OPENAI_API_KEY) && is_string($OPENAI_API_KEY)) {
+            $apiKey = trim($OPENAI_API_KEY);
+        }
+    }
+}
+
 if (!$apiKey) {
     json_error('OPENAI_API_KEY no configurada en el servidor', 500);
 }

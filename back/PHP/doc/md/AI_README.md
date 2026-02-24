@@ -1,10 +1,10 @@
-# 🤖 Inteligencia Artificial - Luke's House Casa Tranquila
+# Inteligencia Artificial - Luke's House Casa Tranquila
 
 ## Resumen Rápido
 
 Tu sitio web ahora cuenta con **dos funcionalidades principales de IA**:
 
-### 1. 💬 Chatbot Inteligente
+### 1. Chatbot Inteligente
 Un asistente virtual que aparece en la esquina inferior derecha de todas las páginas donde esté integrado.
 
 **Funciones:**
@@ -14,7 +14,7 @@ Un asistente virtual que aparece en la esquina inferior derecha de todas las pá
 - Mantiene contexto de conversación
 - Disponible 24/7
 
-### 2. 🎯 Sistema de Recomendaciones
+### 2. Sistema de Recomendaciones
 Un sistema inteligente que sugiere actividades y crea itinerarios personalizados.
 
 **Funciones:**
@@ -25,7 +25,7 @@ Un sistema inteligente que sugiere actividades y crea itinerarios personalizados
 
 ---
 
-## 🚀 Inicio Rápido (5 minutos)
+## Inicio Rápido (5 minutos)
 
 ### Paso 1: Obtener API Key
 1. Ve a https://platform.openai.com/api-keys
@@ -45,7 +45,7 @@ Recarga tu página y verás:
 
 ---
 
-## 📁 Archivos Creados
+## Archivos Creados
 
 ```
 Proyecto/
@@ -63,21 +63,21 @@ Proyecto/
 
 ---
 
-## 🎨 Páginas Actualizadas
+## Páginas Actualizadas
 
 ### [`index.html`](index.html)
-✅ Ya integrado con el chatbot
+Ya integrado con el chatbot
 - El chatbot aparece automáticamente
 - Listo para usar
 
 ### [`recomendaciones.html`](recomendaciones.html) (NUEVO)
-✅ Página dedicada a recomendaciones
+Página dedicada a recomendaciones
 - Widget interactivo completo
 - Ejemplo de uso del sistema
 
 ---
 
-## 💡 Cómo Usar
+## Cómo Usar
 
 ### Chatbot
 El chatbot se inicializa automáticamente. Los usuarios pueden:
@@ -106,7 +106,7 @@ window.aiRecommendations.createRecommendationWidget('mi-widget');
 
 ---
 
-## ⚙️ Configuración Avanzada
+## Configuración Avanzada
 
 ### Cambiar Modelo de IA
 En [`js/ai-config.js`](js/ai-config.js:13):
@@ -131,7 +131,7 @@ CHATBOT: {
 
 ---
 
-## 💰 Costos Estimados
+## Costos Estimados
 
 ### Con GPT-3.5-Turbo (Recomendado)
 - **Chatbot**: ~$0.001 por conversación
@@ -145,9 +145,9 @@ CHATBOT: {
 
 ---
 
-## 🔒 Seguridad
+## Seguridad
 
-### ⚠️ IMPORTANTE para Producción
+### IMPORTANTE para Producción
 
 **Nunca expongas tu API key en el código del cliente.**
 
@@ -161,7 +161,7 @@ Ver detalles en [`AI_INTEGRATION_GUIDE.md`](AI_INTEGRATION_GUIDE.md#seguridad)
 
 ---
 
-## 🛠️ Solución de Problemas
+## Solución de Problemas
 
 ### El chatbot no aparece
 ```javascript
@@ -182,7 +182,7 @@ showAISetupHelp()
 
 ---
 
-## 📚 Documentación Completa
+## Documentación Completa
 
 Para información detallada, consulta:
 - [`AI_INTEGRATION_GUIDE.md`](AI_INTEGRATION_GUIDE.md) - Guía completa
@@ -190,22 +190,22 @@ Para información detallada, consulta:
 
 ---
 
-## 🎯 Próximos Pasos
+## Próximos Pasos
 
 ### Sin API Key (Funcionalidad Básica)
-✅ El chatbot muestra información de contacto
-✅ Las recomendaciones funcionan con filtros locales
-✅ Todo funciona sin costos
+ El chatbot muestra información de contacto
+ Las recomendaciones funcionan con filtros locales
+ Todo funciona sin costos
 
 ### Con API Key (Funcionalidad Completa)
-✅ Chatbot con respuestas inteligentes
-✅ Recomendaciones enriquecidas con IA
-✅ Conversaciones contextuales
-✅ Análisis personalizado
+ Chatbot con respuestas inteligentes
+ Recomendaciones enriquecidas con IA
+ Conversaciones contextuales
+ Análisis personalizado
 
 ---
 
-## 📞 Soporte
+## Soporte
 
 ¿Necesitas ayuda?
 - **Email**: lucaszv2006@gmail.com
@@ -213,24 +213,24 @@ Para información detallada, consulta:
 
 ---
 
-## 🌟 Características Destacadas
+## Características Destacadas
 
 ### Chatbot
-- ✨ Interfaz moderna y responsive
-- 💬 Conversaciones contextuales
-- 🚀 Respuestas instantáneas
-- 📱 Compatible con móviles
-- 🎨 Totalmente personalizable
+- Interfaz moderna y responsive
+- Conversaciones contextuales
+- Respuestas instantáneas
+- Compatible con móviles
+-  Totalmente personalizable
 
 ### Recomendaciones
-- 🎯 Filtros inteligentes
-- 🗺️ Itinerarios personalizados
-- 🖼️ Tarjetas visuales atractivas
-- 📊 Base de datos de atracciones
-- 🤖 Enriquecimiento con IA
+-  Filtros inteligentes
+-  Itinerarios personalizados
+-  Tarjetas visuales atractivas
+-  Base de datos de atracciones
+-  Enriquecimiento con IA
 
 ---
 
-**¡Disfruta de tu sitio web potenciado con IA! 🚀**
+**¡Disfruta de tu sitio web potenciado con IA! **
 
 Para comenzar, simplemente configura tu API key en [`js/ai-config.js`](js/ai-config.js) y recarga la página.

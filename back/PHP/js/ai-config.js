@@ -1,11 +1,5 @@
-/**
- * Configuracion de IA para Luke's House Casa Tranquila
- * El chatbot usa proxy PHP por defecto para no exponer la API key en el cliente.
- */
-
 const AI_CONFIG = {
-    // Solo se usa si desactivas el proxy y haces llamada directa desde navegador.
-    OPENAI_API_KEY: 'TU_API_KEY_AQUI',
+    OPENAI_API_KEY: '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',
     MODEL: 'gpt-3.5-turbo',
 
     CHATBOT: {

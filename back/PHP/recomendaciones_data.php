@@ -11,8 +11,45 @@ $response = [
         'cards' => 0,
     ],
     'nextReservations' => [],
+    'warnings' => [],
     'error' => null,
 ];
+
+function table_exists(mysqli $conn, string $tableName): bool {
+    $safeName = $conn->real_escape_string($tableName);
+    $result = $conn->query("SHOW TABLES LIKE '{$safeName}'");
+    return $result instanceof mysqli_result && $result->num_rows > 0;
+}
+
+function first_existing_table(mysqli $conn, array $tableNames): ?string {
+    foreach ($tableNames as $tableName) {
+        if (table_exists($conn, $tableName)) {
+            return $tableName;
+        }
+    }
+    return null;
+}
+
+function has_columns(mysqli $conn, string $tableName, array $columns): bool {
+    $safeTable = str_replace('`', '``', $tableName);
+    $result = $conn->query("SHOW COLUMNS FROM `{$safeTable}`");
+    if (!($result instanceof mysqli_result)) {
+        return false;
+    }
+
+    $available = [];
+    while ($row = $result->fetch_assoc()) {
+        $available[$row['Field']] = true;
+    }
+
+    foreach ($columns as $column) {
+        if (!isset($available[$column])) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 try {
     $dbHost = $DB_CONSUSLT ?? $DB_CONSULT ?? $DB_HOSTNAME;
@@ -27,38 +64,62 @@ try {
 
     $conn->set_charset('utf8mb4');
 
-    $usersResult = $conn->query('SELECT COUNT(*) AS total FROM users');
-    if ($usersResult && $row = $usersResult->fetch_assoc()) {
-        $response['stats']['users'] = (int) $row['total'];
-    }
+    $usersTable = first_existing_table($conn, ['users']);
+    $reservationsTable = first_existing_table($conn, ['reservations', 'reservas']);
+    $cardsTable = first_existing_table($conn, ['cards', 'ValidacionTarjetas', 'tarjetas']);
 
-    $reservationsResult = $conn->query('SELECT COUNT(*) AS total FROM reservations');
-    if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
-        $response['stats']['reservations'] = (int) $row['total'];
-    }
-
-    $cardsResult = $conn->query('SELECT COUNT(*) AS total FROM cards');
-    if ($cardsResult && $row = $cardsResult->fetch_assoc()) {
-        $response['stats']['cards'] = (int) $row['total'];
-    }
-
-    $nextReservationsQuery = "
-        SELECT nombre, fecha, estado
-        FROM reservations
-        WHERE fecha >= CURDATE()
-        ORDER BY fecha ASC
-        LIMIT 5
-    ";
-
-    $nextReservationsResult = $conn->query($nextReservationsQuery);
-    if ($nextReservationsResult) {
-        while ($reservation = $nextReservationsResult->fetch_assoc()) {
-            $response['nextReservations'][] = [
-                'nombre' => $reservation['nombre'],
-                'fecha' => $reservation['fecha'],
-                'estado' => $reservation['estado'],
-            ];
+    if ($usersTable !== null) {
+        $usersResult = $conn->query("SELECT COUNT(*) AS total FROM `{$usersTable}`");
+        if ($usersResult && $row = $usersResult->fetch_assoc()) {
+            $response['stats']['users'] = (int) $row['total'];
         }
+    } else {
+        $response['warnings'][] = "La tabla 'users' no existe.";
+    }
+
+    if ($reservationsTable !== null) {
+        $reservationsResult = $conn->query("SELECT COUNT(*) AS total FROM `{$reservationsTable}`");
+        if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
+            $response['stats']['reservations'] = (int) $row['total'];
+        }
+    } else {
+        $response['warnings'][] = "No existe una tabla de reservas (reservations/reservas).";
+    }
+
+    if ($cardsTable !== null) {
+        $cardsResult = $conn->query("SELECT COUNT(*) AS total FROM `{$cardsTable}`");
+        if ($cardsResult && $row = $cardsResult->fetch_assoc()) {
+            $response['stats']['cards'] = (int) $row['total'];
+        }
+    } else {
+        $response['warnings'][] = "No existe una tabla de tarjetas (cards/ValidacionTarjetas/tarjetas).";
+    }
+
+    if ($reservationsTable !== null && has_columns($conn, $reservationsTable, ['nombre', 'fecha'])) {
+        $statusColumn = has_columns($conn, $reservationsTable, ['estado']) ? 'estado' : "'confirmada' AS estado";
+        $nextReservationsQuery = "
+            SELECT nombre, fecha, estado
+            FROM (
+                SELECT nombre, fecha, {$statusColumn}
+                FROM `{$reservationsTable}`
+            ) AS r
+            WHERE fecha >= CURDATE()
+            ORDER BY fecha ASC
+            LIMIT 5
+        ";
+
+        $nextReservationsResult = $conn->query($nextReservationsQuery);
+        if ($nextReservationsResult) {
+            while ($reservation = $nextReservationsResult->fetch_assoc()) {
+                $response['nextReservations'][] = [
+                    'nombre' => $reservation['nombre'],
+                    'fecha' => $reservation['fecha'],
+                    'estado' => $reservation['estado'],
+                ];
+            }
+        }
+    } elseif ($reservationsTable !== null) {
+        $response['warnings'][] = "La tabla '{$reservationsTable}' no tiene columnas compatibles (nombre/fecha).";
     }
 
     $conn->close();

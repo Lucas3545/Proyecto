@@ -1,70 +1,4 @@
-﻿<?php
-require_once __DIR__ . '/back/PHP/includes/config.php';
-
-$dbError = null;
-$dbStats = [
-    'users' => 0,
-    'reservations' => 0,
-    'cards' => 0,
-];
-$nextReservations = [];
-
-try {
-    $dbHost = $DB_CONSUSLT ?? $DB_CONSULT ?? $DB_HOSTNAME;
-    $dbName = $DB_TEXT ?? $DB_NAME;
-    $dbPass = $D_ANSWER ?? $DB_ANSWER ?? $DB_PASSWORD;
-    $dbUser = $DB_USERNAME ?? 'root';
-
-    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
-
-    if ($conn->connect_error) {
-        throw new RuntimeException('Error de conexion: ' . $conn->connect_error);
-    }
-
-    $conn->set_charset('utf8mb4');
-
-    $usersResult = $conn->query('SELECT COUNT(*) AS total FROM users');
-    if ($usersResult && $row = $usersResult->fetch_assoc()) {
-        $dbStats['users'] = (int) $row['total'];
-    }
-
-    $reservationsResult = $conn->query('SELECT COUNT(*) AS total FROM reservations');
-    if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
-        $dbStats['reservations'] = (int) $row['total'];
-    }
-
-    $cardsResult = $conn->query('SELECT COUNT(*) AS total FROM cards');
-    if ($cardsResult && $row = $cardsResult->fetch_assoc()) {
-        $dbStats['cards'] = (int) $row['total'];
-    }
-
-    $nextReservationsQuery = "
-        SELECT nombre, fecha, estado
-        FROM reservations
-        WHERE fecha >= CURDATE()
-        ORDER BY fecha ASC
-        LIMIT 5
-    ";
-
-    $nextReservationsResult = $conn->query($nextReservationsQuery);
-    if ($nextReservationsResult) {
-        while ($reservation = $nextReservationsResult->fetch_assoc()) {
-            $nextReservations[] = $reservation;
-        }
-    }
-
-    $conn->close();
-} catch (Throwable $e) {
-    $dbError = $e->getMessage();
-}
-
-?>
-<!DOCTYPE html>
-
-<script>
-  window.RECOMMENDATIONS_API_ENDPOINT = './back/PHP/recomendaciones_data.php';
-</script>
-
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -266,46 +200,31 @@ try {
             <i class="fas fa-arrow-left"></i>
             Volver al Inicio
         </a>
-
-        <?php if ($dbError !== null): ?>
-            <div class="db-error">
-                No se pudo conectar a la base de datos <strong><?= htmlspecialchars($dbName, ENT_QUOTES, 'UTF-8'); ?></strong>.
-                Detalle: <?= htmlspecialchars($dbError, ENT_QUOTES, 'UTF-8'); ?>
+        <section class="db-panel">
+            <h2>Datos en tiempo real desde MySQL</h2>
+            <div id="db-status" class="db-context-inline">
+                <p>Cargando datos de base de datos...</p>
             </div>
-        <?php else: ?>
-            <section class="db-panel">
-                <h2>Datos en tiempo real desde MySQL</h2>
-                <div class="db-stats">
-                    <article class="db-stat">
-                        <strong>Usuarios registrados</strong>
-                        <span><?= $dbStats['users']; ?></span>
-                    </article>
-                    <article class="db-stat">
-                        <strong>Reservas totales</strong>
-                        <span><?= $dbStats['reservations']; ?></span>
-                    </article>
-                    <article class="db-stat">
-                        <strong>Tarjetas guardadas</strong>
-                        <span><?= $dbStats['cards']; ?></span>
-                    </article>
-                </div>
+            <div class="db-stats">
+                <article class="db-stat">
+                    <strong>Usuarios registrados</strong>
+                    <span id="db-users">0</span>
+                </article>
+                <article class="db-stat">
+                    <strong>Reservas totales</strong>
+                    <span id="db-reservations">0</span>
+                </article>
+                <article class="db-stat">
+                    <strong>Tarjetas guardadas</strong>
+                    <span id="db-cards">0</span>
+                </article>
+            </div>
 
-                <h3>Próximas reservas</h3>
-                <?php if (count($nextReservations) > 0): ?>
-                    <ul class="reservation-list">
-                        <?php foreach ($nextReservations as $reservation): ?>
-                            <li>
-                                <strong><?= htmlspecialchars($reservation['nombre'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                                - <?= htmlspecialchars($reservation['fecha'], ENT_QUOTES, 'UTF-8'); ?>
-                                (<?= htmlspecialchars($reservation['estado'], ENT_QUOTES, 'UTF-8'); ?>)
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php else: ?>
-                    <p>No hay reservas futuras registradas.</p>
-                <?php endif; ?>
-            </section>
-        <?php endif; ?>
+            <h3>Próximas reservas</h3>
+            <ul id="db-next-reservations" class="reservation-list">
+                <li>Cargando reservas...</li>
+            </ul>
+        </section>
 
         <div class="features-grid">
             <div class="feature-card">
@@ -344,6 +263,79 @@ try {
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const dbEndpoint = window.RECOMMENDATIONS_API_ENDPOINT || './back/PHP/recomendaciones_data.php';
+            const escapeHtml = (value) => {
+                const div = document.createElement('div');
+                div.textContent = String(value ?? '');
+                return div.innerHTML;
+            };
+
+            const loadDbPanelData = async () => {
+                const statusEl = document.getElementById('db-status');
+                const usersEl = document.getElementById('db-users');
+                const reservationsEl = document.getElementById('db-reservations');
+                const cardsEl = document.getElementById('db-cards');
+                const listEl = document.getElementById('db-next-reservations');
+
+                try {
+                    const response = await fetch(dbEndpoint, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' },
+                        cache: 'no-store'
+                    });
+
+                    let data = null;
+                    try {
+                        data = await response.json();
+                    } catch (parseError) {
+                        if (!response.ok) {
+                            throw new Error('HTTP ' + response.status);
+                        }
+                        throw new Error('Respuesta invalida del servidor');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data?.error || ('HTTP ' + response.status));
+                    }
+
+                    if (!data.success) {
+                        throw new Error(data.error || 'No se pudo obtener informacion de la base de datos');
+                    }
+
+                    const stats = data.stats || {};
+                    const nextReservations = Array.isArray(data.nextReservations) ? data.nextReservations : [];
+                    const warnings = Array.isArray(data.warnings) ? data.warnings : [];
+
+                    usersEl.textContent = Number(stats.users || 0);
+                    reservationsEl.textContent = Number(stats.reservations || 0);
+                    cardsEl.textContent = Number(stats.cards || 0);
+                    statusEl.innerHTML = warnings.length > 0
+                        ? `<p class="db-context-error">${escapeHtml(warnings.join(' '))}</p>`
+                        : '<p>Conectado a MySQL en tiempo real.</p>';
+
+                    if (nextReservations.length === 0) {
+                        listEl.innerHTML = '<li>No hay reservas futuras registradas.</li>';
+                        return;
+                    }
+
+                    listEl.innerHTML = nextReservations.map((reservation) => `
+                        <li>
+                            <strong>${escapeHtml(reservation.nombre)}</strong>
+                            - ${escapeHtml(reservation.fecha)}
+                            (${escapeHtml(reservation.estado)})
+                        </li>
+                    `).join('');
+                } catch (error) {
+                    if (statusEl) {
+                        statusEl.innerHTML = `<p class="db-context-error">Error de conexión a BD: ${escapeHtml(error.message)}</p>`;
+                    }
+                    if (listEl) {
+                        listEl.innerHTML = '<li>No se pudieron cargar las reservas.</li>';
+                    }
+                }
+            };
+
+            loadDbPanelData();
             if (window.aiRecommendations) {
                 window.aiRecommendations.createRecommendationWidget('recommendations-widget');
             } else {

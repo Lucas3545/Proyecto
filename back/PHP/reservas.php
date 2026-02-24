@@ -4,7 +4,13 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once 'includes/config.php';
+require_once __DIR__ . '/includes/config.php';
+
+function table_exists(mysqli $conn, string $tableName): bool {
+    $safeName = $conn->real_escape_string($tableName);
+    $result = $conn->query("SHOW TABLES LIKE '{$safeName}'");
+    return $result instanceof mysqli_result && $result->num_rows > 0;
+}
 
 $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
@@ -15,6 +21,19 @@ if ($conn->connect_error) {
 
 $conn->set_charset('utf8');
 
+$reservationsTable = null;
+if (table_exists($conn, 'reservations')) {
+    $reservationsTable = 'reservations';
+} elseif (table_exists($conn, 'reservas')) {
+    $reservationsTable = 'reservas';
+}
+
+if ($reservationsTable === null) {
+    echo json_encode(['success' => false, 'message' => "No existe la tabla de reservas (reservations/reservas)"]);
+    $conn->close();
+    exit;
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
@@ -22,10 +41,16 @@ if ($method === 'GET') {
     $anio = isset($_GET['anio']) ? intval($_GET['anio']) : null;
 
     if ($mes !== null && $anio !== null) {
-        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM reservations WHERE MONTH(fecha) = ? AND YEAR(fecha) = ? AND estado = 'confirmada'");
+        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable} WHERE MONTH(fecha) = ? AND YEAR(fecha) = ? AND estado = 'confirmada'");
         $stmt->bind_param('ii', $mes, $anio);
     } else {
-        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM reservations WHERE estado = 'confirmada'");
+        $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable} WHERE estado = 'confirmada'");
+    }
+
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Error al preparar consulta de reservas: ' . $conn->error]);
+        $conn->close();
+        exit;
     }
 
     $stmt->execute();
@@ -62,7 +87,12 @@ if ($method === 'GET') {
         exit;
     }
 
-    $check = $conn->prepare("SELECT id FROM reservations WHERE fecha = ? AND estado = 'confirmada'");
+    $check = $conn->prepare("SELECT id FROM {$reservationsTable} WHERE fecha = ? AND estado = 'confirmada'");
+    if (!$check) {
+        echo json_encode(['success' => false, 'message' => 'Error al validar disponibilidad: ' . $conn->error]);
+        $conn->close();
+        exit;
+    }
     $check->bind_param('s', $fecha);
     $check->execute();
     $check->store_result();
@@ -74,7 +104,12 @@ if ($method === 'GET') {
     }
     $check->close();
 
-    $stmt = $conn->prepare("INSERT INTO reservations (fecha, nombre, email) VALUES (?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO {$reservationsTable} (fecha, nombre, email) VALUES (?, ?, ?)");
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Error al preparar insercion: ' . $conn->error]);
+        $conn->close();
+        exit;
+    }
     $stmt->bind_param('sss', $fecha, $nombre, $email);
 
     if ($stmt->execute()) {
