@@ -1,6 +1,23 @@
 # Guía de Integración de Inteligencia Artificial
 ## Luke's House Casa Tranquila
 
+## Estructura del proyecto
+
+Todo el código está en la carpeta **`frontend/`**:
+
+- **Páginas PHP:** `index.php`, `calendario.php`, `galeria.php`, `informacion.php`, `panel-de-acceso.php`, `recomendaciones.php`, `seleccion-de-metodo-de-pago.php`, `terminos-y-condiciones.php`, etc.
+- **`frontend/includes/`** – Configuración, navbar, footer, procesar.
+- **`frontend/js/`** – Scripts del chatbot, recomendaciones, formularios, etc.
+- **`frontend/css/`** – Estilos.
+- **`frontend/img/`** – Imágenes.
+- **`frontend/doc/`** – Documentación y PDF de términos.
+- **`frontend/database/`** – Script SQL.
+- **APIs/acciones:** `reservas.php`, `ai-chatbot-proxy.php`, `recomendaciones-data.php`, `registro.php`, `enviar.php`, `procesar-tarjeta.php`, etc., en la raíz de `frontend/`.
+
+Para desarrollo local, configura el document root de tu servidor en **`frontend/`** (o en la raíz del proyecto y accede a `/frontend/`).
+
+---
+
 Esta guía te ayudará a integrar y configurar las funcionalidades de IA en tu sitio web.
 
 ---
