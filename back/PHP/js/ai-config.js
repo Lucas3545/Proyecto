@@ -15,7 +15,6 @@ const AI_CONFIG = {
         maxRecommendations: 6,
         useAIEnhancement: true
     },
-
     MESSAGES: {
         apiKeyMissing: 'Configura OPENAI_API_KEY en el servidor para activar IA.',
         error: 'Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.',
