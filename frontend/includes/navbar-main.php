@@ -1,5 +1,5 @@
 <nav class="navbar">
-    <div class="logo">Luke's House</div>
+    <div class="logo">Welcome to Luke's Tiny House</div>
     <ul class="nav-links">
         <li><a class="navbar-link" href="panel-de-acceso.php" title="panel de acceso">panel de acceso</a></li>
         <li><a class="navbar-link" href="informacion.php" title="informacion">informacion</a></li>

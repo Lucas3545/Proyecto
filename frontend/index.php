@@ -13,20 +13,6 @@
 
 <body>
     <header>
-        <div>
-            <h1>Bienvenido a Luke's House</h1>
-            <p class="description">Casa Tranquila - Tu refugio en la naturaleza</p>
-            <nav class="navbar">
-            <div class="logo">Luke's House</div>
-            <ul class="nav-links">
-                <li><a class="navbar-link" href="index.php">Inicio</a></li>
-                <li><a class="navbar-link" href="informacion.php">Informacion</a></li>
-                <li><a class="navbar-link" href="galeria.php">Galeri­a</a></li>
-                <li><a class="navbar-link" href="calendario.php">Reservar</a></li>
-                <li><a class="navbar-link" href="recomendaciones.php" id="chatbot-shortcut" title="Chat de Ayuda"><i class="fas fa-comments"></i></a></li>
-            </ul>
-        </nav>
-        </div>
         <section>
             <button class="btn-reserve" onclick="location.href='calendario.php'"><strong>Reservar
                     Ahora</strong></button>
