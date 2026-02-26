@@ -1,5 +1,4 @@
 <?php
-// Enviar a la base de datos los datos de validacion de tarjeta.
 
 header('Content-Type: application/json; charset=utf-8');
 include('./includes/config.php');

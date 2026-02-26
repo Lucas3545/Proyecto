@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/admin-common.php';
+
+$showAdminDbPanel = admin_is_owner();
 
 $dbError = null;
 $dbStats = [
@@ -263,6 +266,7 @@ try {
             <i class="fas fa-arrow-left"></i>
             Volver al Inicio
         </a>
+        <?php if ($showAdminDbPanel): ?>
         <section class="db-panel">
             <h2>Datos en tiempo real desde MySQL</h2>
             <div id="db-status" class="db-context-inline">
@@ -288,6 +292,7 @@ try {
                 <li>Cargando reservas...</li>
             </ul>
         </section>
+        <?php endif; ?>
 
         <div class="features-grid">
             <div class="feature-card">
@@ -398,7 +403,9 @@ try {
                 }
             };
 
+            <?php if ($showAdminDbPanel): ?>
             loadDbPanelData();
+            <?php endif; ?>
             if (window.aiRecommendations) {
                 window.aiRecommendations.createRecommendationWidget('recommendations-widget');
             } else {
