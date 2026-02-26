@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 require_once __DIR__ . '/includes/config.php';
@@ -40,11 +40,11 @@ function create_reservations_table(mysqli $conn): bool {
 $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
 if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $conn->connect_error]);
+    echo json_encode(['success' => false, 'message' => 'Error de conexion: ' . $conn->connect_error]);
     exit;
 }
 
-$conn->set_charset('utf8');
+$conn->set_charset('utf8mb4');
 
 $reservationsTable = null;
 if (table_exists($conn, 'reservations')) {
@@ -59,7 +59,7 @@ if ($reservationsTable === null) {
     } else {
         echo json_encode([
             'success' => false,
-            'message' => "No existe la tabla de reservas (reservations/reservas) y no se pudo crear: " . $conn->error
+            'message' => 'No existe la tabla de reservas (reservations/reservas) y no se pudo crear: ' . $conn->error
         ]);
         $conn->close();
         exit;
@@ -67,19 +67,24 @@ if ($reservationsTable === null) {
 }
 
 $hasEstadoColumn = has_column($conn, $reservationsTable, 'estado');
-
 $method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'OPTIONS') {
+    echo json_encode(['success' => true]);
+    $conn->close();
+    exit;
+}
 
 if ($method === 'GET') {
     $mes = isset($_GET['mes']) ? intval($_GET['mes']) : null;
     $anio = isset($_GET['anio']) ? intval($_GET['anio']) : null;
-    $estadoFilter = $hasEstadoColumn ? " AND estado = 'confirmada'" : "";
+    $estadoFilter = $hasEstadoColumn ? " AND estado = 'confirmada'" : '';
 
     if ($mes !== null && $anio !== null) {
         $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable} WHERE MONTH(fecha) = ? AND YEAR(fecha) = ?{$estadoFilter}");
         $stmt->bind_param('ii', $mes, $anio);
     } else {
-        $baseWhere = $hasEstadoColumn ? " WHERE estado = 'confirmada'" : "";
+        $baseWhere = $hasEstadoColumn ? " WHERE estado = 'confirmada'" : '';
         $stmt = $conn->prepare("SELECT fecha, nombre, email FROM {$reservationsTable}{$baseWhere}");
     }
 
@@ -99,27 +104,79 @@ if ($method === 'GET') {
 
     echo json_encode(['success' => true, 'reservas' => $reservas]);
     $stmt->close();
+}
 
-} elseif ($method === 'POST') {
-    
+if ($method === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
+    $action = strtolower(trim((string) ($data['action'] ?? 'create')));
 
-    $fecha = $data['fecha'] ?? '';
-    $nombre = $data['nombre'] ?? '';
-    $email = $data['email'] ?? '';
+    if ($action === 'cancel') {
+        $fecha = trim((string) ($data['fecha'] ?? ''));
+        $email = trim((string) ($data['email'] ?? ''));
 
-    if (empty($fecha) || empty($nombre) || empty($email)) {
+        if ($fecha === '' || $email === '') {
+            echo json_encode(['success' => false, 'message' => 'Fecha y correo son obligatorios para cancelar']);
+            $conn->close();
+            exit;
+        }
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            echo json_encode(['success' => false, 'message' => 'Formato de fecha invalido']);
+            $conn->close();
+            exit;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => 'Correo electronico invalido']);
+            $conn->close();
+            exit;
+        }
+
+        if ($hasEstadoColumn) {
+            $stmt = $conn->prepare("UPDATE {$reservationsTable} SET estado = 'cancelada' WHERE fecha = ? AND email = ? AND estado = 'confirmada'");
+        } else {
+            $stmt = $conn->prepare("DELETE FROM {$reservationsTable} WHERE fecha = ? AND email = ?");
+        }
+
+        if (!$stmt) {
+            echo json_encode(['success' => false, 'message' => 'Error al preparar cancelacion: ' . $conn->error]);
+            $conn->close();
+            exit;
+        }
+
+        $stmt->bind_param('ss', $fecha, $email);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            echo json_encode(['success' => true, 'message' => 'Reserva cancelada con exito']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No se encontro una reserva activa con esa fecha y correo']);
+        }
+
+        $stmt->close();
+        $conn->close();
+        exit;
+    }
+
+    $fecha = trim((string) ($data['fecha'] ?? ''));
+    $nombre = trim((string) ($data['nombre'] ?? ''));
+    $email = trim((string) ($data['email'] ?? ''));
+
+    if ($fecha === '' || $nombre === '' || $email === '') {
         echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+        $conn->close();
         exit;
     }
 
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
-        echo json_encode(['success' => false, 'message' => 'Formato de fecha inválido']);
+        echo json_encode(['success' => false, 'message' => 'Formato de fecha invalido']);
+        $conn->close();
         exit;
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(['success' => false, 'message' => 'Correo electrónico inválido']);
+        echo json_encode(['success' => false, 'message' => 'Correo electronico invalido']);
+        $conn->close();
         exit;
     }
 
@@ -132,13 +189,15 @@ if ($method === 'GET') {
         $conn->close();
         exit;
     }
+
     $check->bind_param('s', $fecha);
     $check->execute();
     $check->store_result();
 
     if ($check->num_rows > 0) {
-        echo json_encode(['success' => false, 'message' => 'Esta fecha ya está reservada']);
+        echo json_encode(['success' => false, 'message' => 'Esta fecha ya esta reservada']);
         $check->close();
+        $conn->close();
         exit;
     }
     $check->close();
@@ -149,10 +208,11 @@ if ($method === 'GET') {
         $conn->close();
         exit;
     }
+
     $stmt->bind_param('sss', $fecha, $nombre, $email);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Reserva realizada con éxito', 'id' => $stmt->insert_id]);
+        echo json_encode(['success' => true, 'message' => 'Reserva realizada con exito', 'id' => $stmt->insert_id]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Error al guardar la reserva: ' . $stmt->error]);
     }

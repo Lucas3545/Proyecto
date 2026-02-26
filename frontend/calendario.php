@@ -45,6 +45,7 @@
                 <input type="text" id="nombre" placeholder="Tu nombre" required>
                 <input type="email" id="email" placeholder="Tu correo" required>
                 <button id="confirmReservation">Confirmar Reserva</button>
+                <button id="cancelReservation" type="button" style="display:none;">Cancelar Reserva</button>
                 <div class="success-message" id="successMsg" style="display:none;">Reserva realizada con exito</div>
             </div>
         </div>
@@ -56,6 +57,7 @@
         let unavailableDates = [];
         let selectedCell = null;
         let selectedDate = null;
+        let reservationMode = 'create';
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
 
@@ -116,20 +118,39 @@
                 const cell = document.createElement('div');
                 cell.className = 'calendar-cell';
                 cell.textContent = day;
+                const isUnavailable = unavailableDates.includes(dateStr);
 
-                if (unavailableDates.includes(dateStr)) {
+                if (isUnavailable) {
                     cell.classList.add('unavailable');
-                } else {
-                    cell.addEventListener('click', function () {
-                        if (selectedCell) selectedCell.classList.remove('selected');
-                        cell.classList.add('selected');
-                        selectedCell = cell;
-                        selectedDate = dateStr;
-                        document.getElementById('reservationForm').style.display = 'block';
-                        document.getElementById('selectedDate').textContent = `Fecha seleccionada: ${day} de ${monthNames[month]} de ${year}`;
-                        document.getElementById('successMsg').style.display = 'none';
-                    });
                 }
+                cell.addEventListener('click', function () {
+                    if (selectedCell) selectedCell.classList.remove('selected');
+                    cell.classList.add('selected');
+                    selectedCell = cell;
+                    selectedDate = dateStr;
+                    reservationMode = isUnavailable ? 'cancel' : 'create';
+
+                    const confirmBtn = document.getElementById('confirmReservation');
+                    const cancelBtn = document.getElementById('cancelReservation');
+                    const nombreInput = document.getElementById('nombre');
+
+                    document.getElementById('reservationForm').style.display = 'block';
+                    document.getElementById('successMsg').style.display = 'none';
+
+                    if (reservationMode === 'cancel') {
+                        document.getElementById('selectedDate').textContent = `Fecha reservada: ${day} de ${monthNames[month]} de ${year}. Ingresa el correo para cancelar.`;
+                        confirmBtn.style.display = 'none';
+                        cancelBtn.style.display = 'inline-block';
+                        nombreInput.style.display = 'none';
+                        nombreInput.removeAttribute('required');
+                    } else {
+                        document.getElementById('selectedDate').textContent = `Fecha seleccionada: ${day} de ${monthNames[month]} de ${year}`;
+                        confirmBtn.style.display = 'inline-block';
+                        cancelBtn.style.display = 'none';
+                        nombreInput.style.display = 'block';
+                        nombreInput.setAttribute('required', 'required');
+                    }
+                });
                 calendarGrid.appendChild(cell);
             }
         }
@@ -170,6 +191,7 @@
                     if (data.success) {
                         await renderCalendar(currentMonth, currentYear);
                         document.getElementById('reservationForm').style.display = 'block';
+                        document.getElementById('successMsg').textContent = 'Reserva realizada con exito';
                         document.getElementById('successMsg').style.display = 'block';
                         document.getElementById('nombre').value = '';
                         document.getElementById('email').value = '';
@@ -180,6 +202,44 @@
                     console.error('Error:', error);
                     alert(error.message || 'Error de conexión al servidor');
                 }
+            }
+        };
+
+        document.getElementById('cancelReservation').onclick = async function () {
+            const email = document.getElementById('email').value.trim();
+            if (!email || !selectedDate) {
+                alert('Debes indicar un correo y una fecha reservada.');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'cancel', fecha: selectedDate, email })
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    await renderCalendar(currentMonth, currentYear);
+                    document.getElementById('reservationForm').style.display = 'block';
+                    document.getElementById('successMsg').textContent = 'Reserva cancelada con exito';
+                    document.getElementById('successMsg').style.display = 'block';
+                    document.getElementById('email').value = '';
+                    document.getElementById('nombre').value = '';
+                    document.getElementById('cancelReservation').style.display = 'none';
+                    document.getElementById('confirmReservation').style.display = 'inline-block';
+                    document.getElementById('nombre').style.display = 'block';
+                    document.getElementById('nombre').setAttribute('required', 'required');
+                } else {
+                    alert(data.message || 'No se pudo cancelar la reserva');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'Error de conexión al servidor');
             }
         };
 
