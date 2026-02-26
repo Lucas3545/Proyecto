@@ -16,6 +16,7 @@
         <section>
             <button class="btn-reserve" onclick="location.href='calendario.php'"><strong>Reservar
                     Ahora</strong></button>
+            <button class="btn-reserve" onclick="location.href='recomendaciones.php'"><strong>Ver recomendaciones</strong></button>
         </section>
         <?php include './includes/navbar-main.php'; ?>
     </header>

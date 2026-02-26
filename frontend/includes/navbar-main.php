@@ -50,7 +50,9 @@
                 <span class="profile-name" title="<?php echo htmlspecialchars($email !== '' ? $email : $displayName, ENT_QUOTES, 'UTF-8'); ?>">
                     Perfil: <?php echo htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?>
                 </span>
-                <a class="navbar-link" href="logout.php" title="Cerrar sesion">Salir</a>
+                <form action="logout.php" method="post" style="display:inline;margin:0;">
+                    <button type="submit" class="navbar-link" title="Cerrar sesion" style="background:none;border:none;padding:0;cursor:pointer;font:inherit;">Salir</button>
+                </form>
             </li>
         <?php endif; ?>
     </ul>

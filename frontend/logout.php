@@ -1,6 +1,13 @@
 <?php
 session_start();
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
+    header('Location: panel-de-acceso.php');
+    exit;
+}
+
 $_SESSION = [];
 
 if (ini_get('session.use_cookies')) {
