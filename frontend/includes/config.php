@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $DB_HOSTNAME = "localhost";
 $DB_NAME = "lukes";
@@ -18,3 +18,5 @@ $OPENAI_API_KEY = getenv('OPENAI_API_KEY') ?: '';
 
 $DB_CONSUSLT = $DB_CONSULT;
 $D_ANSWER = $DB_ANSWER;
+
+$OWNER_EMAIL = getenv('OWNER_EMAIL') ?: 'lucaszv2006@gmail.com';

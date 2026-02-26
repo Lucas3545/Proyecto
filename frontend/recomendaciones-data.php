@@ -100,7 +100,10 @@ try {
     }
 
     if ($reservationsTable !== null) {
-        $reservationsResult = $conn->query("SELECT COUNT(*) AS total FROM `{$reservationsTable}`");
+        $reservationsCountQuery = has_columns($conn, $reservationsTable, ['estado'])
+            ? "SELECT COUNT(*) AS total FROM `{$reservationsTable}` WHERE estado = 'confirmada'"
+            : "SELECT COUNT(*) AS total FROM `{$reservationsTable}`";
+        $reservationsResult = $conn->query($reservationsCountQuery);
         if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
             $response['stats']['reservations'] = (int) $row['total'];
         }
@@ -125,7 +128,7 @@ try {
                 SELECT nombre, fecha, {$statusColumn}
                 FROM `{$reservationsTable}`
             ) AS r
-            WHERE fecha >= CURDATE()
+            WHERE fecha >= CURDATE() AND estado = 'confirmada'
             ORDER BY fecha ASC
             LIMIT 5
         ";

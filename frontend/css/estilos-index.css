@@ -397,6 +397,8 @@ main {
     list-style: none;
     display: flex;
     gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .nav-links li a {
@@ -504,6 +506,43 @@ main {
 
 .navbar-link:hover {
     color: #ffe082;
+}
+
+.profile-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    padding: 6px 10px;
+}
+
+.profile-name {
+    color: #fff;
+    font-size: 0.9rem;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-shortcut {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 2100;
+    background: #111827;
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.admin-shortcut:hover {
+    background: #1f2937;
 }
 
 .description {

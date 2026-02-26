@@ -18,11 +18,11 @@ try {
         die();
     }
     
-    echo "<p style='color: green;'>✅ Connected successfully to database: <strong>" . $DB_NAME . "</strong></p>";
+    echo "<p style='color: green;'> Connected successfully to database: <strong>" . $DB_NAME . "</strong></p>";
     
     $result = $conn->query("SHOW TABLES LIKE 'users'");
     if ($result->num_rows > 0) {
-        echo "<p style='color: green;'>✅ Table 'users' exists</p>";
+        echo "<p style='color: green;'> Table 'users' exists</p>";
         
         $columns = $conn->query("DESCRIBE users");
         echo "<h3>Table Structure:</h3><ul>";
@@ -31,12 +31,12 @@ try {
         }
         echo "</ul>";
     } else {
-        echo "<p style='color: orange;'>⚠️ Table 'users' does not exist. Run the SQL script to create it.</p>";
+        echo "<p style='color: orange;'> Table 'users' does not exist. Run the SQL script to create it.</p>";
     }
     
     $conn->close();
     
 } catch (Exception $e) {
-    echo "<p style='color: red;'>❌ Error: " . $e->getMessage() . "</p>";
+    echo "<p style='color: red;'> Error: " . $e->getMessage() . "</p>";
 }
 ?>

@@ -1,15 +1,61 @@
+<?php if (!defined('BOOTSTRAP_ICONS_LOADED')): ?>
+    <?php define('BOOTSTRAP_ICONS_LOADED', true); ?>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<?php endif; ?>
+
 <nav class="navbar">
+    <?php
+    $displayName = '';
+    $email = '';
+
+    if (!empty($_COOKIE['lh_user'])) {
+        $displayName = trim((string) $_COOKIE['lh_user']);
+    } elseif (!empty($_SESSION['username'])) {
+        $displayName = trim((string) $_SESSION['username']);
+    }
+
+    if (!empty($_COOKIE['lh_email'])) {
+        $email = trim((string) $_COOKIE['lh_email']);
+    } elseif (!empty($_SESSION['user_email'])) {
+        $email = trim((string) $_SESSION['user_email']);
+    }
+
+    $isLoggedIn = $displayName !== '';
+    $ownerEmail = 'lucaszv2006@gmail.com';
+    $isOwner = $isLoggedIn && strcasecmp($email, $ownerEmail) === 0;
+    ?>
+
     <div class="logo">Welcome to Luke's Tiny House</div>
+
     <ul class="nav-links">
-        <li><a class="navbar-link" href="panel-de-acceso.php" title="panel de acceso">panel de acceso</a></li>
-        <li><a class="navbar-link" href="informacion.php" title="informacion">informacion</a></li>
-        <a class="navbar-link" href="https://www.facebook.com/lucas.zuniga.5492" title="Facebook"><i class="fab fa-facebook"></i></a>
-        <a class="navbar-link" href="https://www.instagram.com/lucas_zuniga_2006/" title="Instagram"><i class="fab fa-instagram"></i></a>
-        <a class="navbar-link" href="mailto:lucaszv2006@gmail.com" title="Gmail"><i class="fas fa-envelope"></i></a>
-        <a class="navbar-link" href="tel:+50683256836" title="Contacto"><i class="fas fa-phone"></i></a>
-        <a class="navbar-link" href="terminos-y-condiciones.php" title="Términos y condiciones"><i class="fas fa-file-alt"></i></a>
-        <a class="navbar-link" href="galeria.php" title="Galería"><i class="fas fa-image"></i></a>
-        <a href="seleccion-de-metodo-de-pago.php" class="nav-item" title="Selección de método de pago">Metodo de pago</a>
-        <a class="navbar-link" href="./recomendaciones.php" id="chatbot-shortcut" title="Chat de Ayuda"><i class="fas fa-comments"></i></a>
+        <li><a class="navbar-link" href="index.php" title="Inicio">Inicio</a></li>
+        <li><a class="navbar-link" href="informacion.php" title="Informacion">Informacion</a></li>
+
+        <?php if (!$isLoggedIn): ?>
+            <li><a class="navbar-link" href="galeria.php" title="Galeria">Galeria</a></li>
+            <li><a class="navbar-link" href="panel-de-acceso.php" title="Panel de acceso">Panel de acceso</a></li>
+        <?php else: ?>
+            <li><a class="navbar-link" href="galeria.php" title="Galeria">Galeria</a></li>
+            <li><a class="navbar-link" href="seleccion-de-metodo-de-pago.php" title="Metodo de pago">Metodo de pago</a></li>
+            <li><a class="navbar-link" href="recomendaciones.php" title="Recomendaciones">Recomendaciones</a></li>
+            <?php if ($isOwner): ?>
+                <li><a class="navbar-link" href="Panel-admin.php" title="Panel admin">Panel admin</a></li>
+            <?php endif; ?>
+            <li><a class="navbar-link" href="terminos-y-condiciones.php" title="Terminos y condiciones">Terminos</a></li>
+            <li><a class="navbar-link" href="https://www.facebook.com/lucas.zuniga.5492" title="Facebook"><i class="bi bi-facebook"></i> Facebook</a></li>
+            <li><a class="navbar-link" href="https://www.instagram.com/lucas_zuniga_2006/" title="Instagram"><i class="bi bi-instagram"></i> Instagram</a></li>
+            <li><a class="navbar-link" href="mailto:lucaszv2006@gmail.com" title="Gmail"><i class="bi bi-envelope-fill"></i> Gmail</a></li>
+            <li><a class="navbar-link" href="tel:+50683256836" title="Contacto"><i class="bi bi-telephone-fill"></i> Contacto</a></li>
+            <li class="profile-chip">
+                <span class="profile-name" title="<?php echo htmlspecialchars($email !== '' ? $email : $displayName, ENT_QUOTES, 'UTF-8'); ?>">
+                    Perfil: <?php echo htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?>
+                </span>
+                <a class="navbar-link" href="logout.php" title="Cerrar sesion">Salir</a>
+            </li>
+        <?php endif; ?>
     </ul>
 </nav>
+
+<?php if ($isOwner): ?>
+    <a class="admin-shortcut" href="Panel-admin.php" title="Acceso directo admin">Admin</a>
+<?php endif; ?>

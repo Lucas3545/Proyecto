@@ -16,12 +16,6 @@
     <main>
         <details>
             <summary>&#9776;</summary>
-            <li><a href="index.php" class="nav-item" title="Inicio">Inicio</a></li>
-            <li><a href="panel-de-acceso.php" class="nav-item" title="Panel de Control">Panel de Acceso</a></li>
-            <li><a href="informacion.php" class="nav-item" title="InformaciÃ³n">Informacion</a></li>
-            <li><a href="galeria.php" class="nav-item" title="Galeria">Galeria</a></li>
-            <li><a href="mailto:lucaszv2006@gmail.com" class="nav-item">gmail</a></li>
-            <li><a href="tel:+50683256836" class="nav-item" title="Contacto">Contacto</a></li>
             <li><a href="index.php" class="nav-item" title="Inicio">⏪Inicio</a></li>
             <li><a href="panel-de-acceso.php" class="nav-item" title="Panel de Control">🟩Panel de Acceso</a></li>
             <li><a href="informacion.php" class="nav-item" title="Información">🗄️Información</a></li>
@@ -95,7 +89,7 @@
             daysGrid.innerHTML = '';
             calendarGrid.innerHTML = '';
 
-            const days = ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b'];
+            const days = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
             days.forEach(d => {
                 const dayDiv = document.createElement('div');
                 dayDiv.className = 'calendar-day';
@@ -133,22 +127,27 @@
                     const confirmBtn = document.getElementById('confirmReservation');
                     const cancelBtn = document.getElementById('cancelReservation');
                     const nombreInput = document.getElementById('nombre');
+                    const emailInput = document.getElementById('email');
 
                     document.getElementById('reservationForm').style.display = 'block';
                     document.getElementById('successMsg').style.display = 'none';
 
                     if (reservationMode === 'cancel') {
-                        document.getElementById('selectedDate').textContent = `Fecha reservada: ${day} de ${monthNames[month]} de ${year}. Ingresa el correo para cancelar.`;
+                        document.getElementById('selectedDate').textContent = `Fecha reservada: ${day} de ${monthNames[month]} de ${year}. Presiona el boton para cancelar.`;
                         confirmBtn.style.display = 'none';
                         cancelBtn.style.display = 'inline-block';
                         nombreInput.style.display = 'none';
+                        emailInput.style.display = 'none';
                         nombreInput.removeAttribute('required');
+                        emailInput.removeAttribute('required');
                     } else {
                         document.getElementById('selectedDate').textContent = `Fecha seleccionada: ${day} de ${monthNames[month]} de ${year}`;
                         confirmBtn.style.display = 'inline-block';
                         cancelBtn.style.display = 'none';
                         nombreInput.style.display = 'block';
+                        emailInput.style.display = 'block';
                         nombreInput.setAttribute('required', 'required');
+                        emailInput.setAttribute('required', 'required');
                     }
                 });
                 calendarGrid.appendChild(cell);
@@ -206,9 +205,8 @@
         };
 
         document.getElementById('cancelReservation').onclick = async function () {
-            const email = document.getElementById('email').value.trim();
-            if (!email || !selectedDate) {
-                alert('Debes indicar un correo y una fecha reservada.');
+            if (!selectedDate) {
+                alert('Debes seleccionar una fecha reservada.');
                 return;
             }
 
@@ -216,7 +214,7 @@
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'cancel', fecha: selectedDate, email })
+                    body: JSON.stringify({ action: 'cancel', fecha: selectedDate })
                 });
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
@@ -233,7 +231,9 @@
                     document.getElementById('cancelReservation').style.display = 'none';
                     document.getElementById('confirmReservation').style.display = 'inline-block';
                     document.getElementById('nombre').style.display = 'block';
+                    document.getElementById('email').style.display = 'block';
                     document.getElementById('nombre').setAttribute('required', 'required');
+                    document.getElementById('email').setAttribute('required', 'required');
                 } else {
                     alert(data.message || 'No se pudo cancelar la reserva');
                 }

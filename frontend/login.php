@@ -180,6 +180,10 @@ try {
     $_SESSION['username'] = (string) $user['username'];
     $_SESSION['fullname'] = (string) $user['fullname'];
 
+    $cookieExpire = time() + (60 * 60 * 24 * 30);
+    setcookie('lh_user', (string) $user['username'], $cookieExpire, '/');
+    setcookie('lh_email', (string) $user['email'], $cookieExpire, '/');
+
     log_access($conn, 'login', (string) $user['email'], (string) $user['username'], (string) $user['fullname'], 'ok', 'Inicio de sesion exitoso');
 
     echo json_encode([

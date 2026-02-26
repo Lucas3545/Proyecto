@@ -112,10 +112,9 @@ if ($method === 'POST') {
 
     if ($action === 'cancel') {
         $fecha = trim((string) ($data['fecha'] ?? ''));
-        $email = trim((string) ($data['email'] ?? ''));
 
-        if ($fecha === '' || $email === '') {
-            echo json_encode(['success' => false, 'message' => 'Fecha y correo son obligatorios para cancelar']);
+        if ($fecha === '') {
+            echo json_encode(['success' => false, 'message' => 'Fecha obligatoria para cancelar']);
             $conn->close();
             exit;
         }
@@ -126,16 +125,10 @@ if ($method === 'POST') {
             exit;
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(['success' => false, 'message' => 'Correo electronico invalido']);
-            $conn->close();
-            exit;
-        }
-
         if ($hasEstadoColumn) {
-            $stmt = $conn->prepare("UPDATE {$reservationsTable} SET estado = 'cancelada' WHERE fecha = ? AND email = ? AND estado = 'confirmada'");
+            $stmt = $conn->prepare("UPDATE {$reservationsTable} SET estado = 'cancelada' WHERE fecha = ? AND estado = 'confirmada'");
         } else {
-            $stmt = $conn->prepare("DELETE FROM {$reservationsTable} WHERE fecha = ? AND email = ?");
+            $stmt = $conn->prepare("DELETE FROM {$reservationsTable} WHERE fecha = ?");
         }
 
         if (!$stmt) {
@@ -144,13 +137,13 @@ if ($method === 'POST') {
             exit;
         }
 
-        $stmt->bind_param('ss', $fecha, $email);
+        $stmt->bind_param('s', $fecha);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
             echo json_encode(['success' => true, 'message' => 'Reserva cancelada con exito']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'No se encontro una reserva activa con esa fecha y correo']);
+            echo json_encode(['success' => false, 'message' => 'No se encontro una reserva activa en esa fecha']);
         }
 
         $stmt->close();

@@ -25,12 +25,12 @@
             <div class="card-content">
                 <h2 class="card-title">Welcome to Luke's Tiny House</h2>
                 <p class="card-description">Disfruta una estancia Ãºnica; patio de 1 acre visitado por perezosos,
-                    tucanes, ranas, colibrÃ­es, polinizadores, etc. En las tardes y maÃ±anas talvez escuches monos
+                    tucanes, ranas, colibri­es, polinizadores, etc. En las tardes y maÃ±anas talvez escuches monos
                     aulladores.
                     Si caminas un poco, es posible que veas perezosos y algunos animales silvestres, Â¡nunca alimentes a
                     ninguno! <br>
                     La casa es ideal para compartir, pasear, hacer ejercicio, leer, pintar, acampar en verano ya que
-                    cuenta con amplio terreno y darte unos dÃ­as de descanso en este espacio rural.
+                    cuenta con amplio terreno y darte unos di­as de descanso en este espacio rural.
                     Necesitas 30 minutos para ir a Fortuna.<br></p>
             </div>
         </div>

@@ -1,0 +1,31 @@
+:root { --bg:#f5f7fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#111827; }
+* { box-sizing:border-box; }
+body.admin-body { margin:0; font-family:Arial,sans-serif; background:var(--bg); color:var(--text); }
+.admin-header { margin-bottom: 10px; }
+
+.denied-body { margin:0; font-family:Arial,sans-serif; background:#f5f7fb; color:#1f2937; display:grid; place-items:center; min-height:100vh; }
+.denied-wrap { width: min(1120px, 100%); margin: 0 auto; padding: 16px; }
+.denied-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:28px; width:min(92vw,480px); box-shadow:0 10px 30px rgba(0,0,0,.06); }
+.denied-card h1 { margin:0 0 10px; font-size:1.4rem; }
+.denied-card p { margin:0 0 16px; color:#4b5563; }
+.denied-card a { display:inline-block; text-decoration:none; background:#111827; color:#fff; padding:10px 14px; border-radius:10px; }
+
+.wrap { max-width:1120px; margin:0 auto; padding:20px; }
+.top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+.title { margin:0; font-size:1.45rem; }
+.owner { color:var(--muted); font-size:.92rem; }
+.actions { display:flex; gap:8px; flex-wrap:wrap; }
+.btn { text-decoration:none; background:var(--accent); color:#fff; padding:10px 12px; border-radius:10px; font-size:.9rem; }
+.btn.alt { background:#fff; color:var(--text); border:1px solid var(--line); }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:12px 0 18px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+.k { color:var(--muted); font-size:.85rem; margin-bottom:6px; }
+.v { font-size:1.4rem; font-weight:700; }
+.panels { display:grid; grid-template-columns:1fr; gap:12px; }
+.panel h3 { margin:0 0 10px; font-size:1rem; }
+table { width:100%; border-collapse:collapse; font-size:.9rem; }
+th,td { text-align:left; padding:8px; border-bottom:1px solid var(--line); }
+th { color:var(--muted); font-weight:600; }
+.badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:.75rem; border:1px solid var(--line); background:#f9fafb; }
+.ok { border-color:#86efac; background:#f0fdf4; }
+.err { border-color:#fca5a5; background:#fef2f2; }

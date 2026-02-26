@@ -28,7 +28,7 @@ try {
         $dbStats['users'] = (int) $row['total'];
     }
 
-    $reservationsResult = $conn->query('SELECT COUNT(*) AS total FROM reservations');
+    $reservationsResult = $conn->query("SELECT COUNT(*) AS total FROM reservations WHERE estado = 'confirmada'");
     if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
         $dbStats['reservations'] = (int) $row['total'];
     }
@@ -41,7 +41,7 @@ try {
     $nextReservationsQuery = "
         SELECT nombre, fecha, estado
         FROM reservations
-        WHERE fecha >= CURDATE()
+        WHERE fecha >= CURDATE() AND estado = 'confirmada'
         ORDER BY fecha ASC
         LIMIT 5
     ";

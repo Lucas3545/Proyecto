@@ -17,12 +17,10 @@
 
     <h3 class="titulo_principal">Nueva reserva</h3>
 
-    <label for="slcPago">MÃ©todo de pago:</label>
+    <label for="slcPago">Metodo de pago:</label>
     <select id="slcPago">
         <option value="0">-- Elegi­ una opcion --</option>
         <option value="tarjeta">Tarjeta</option>
-        <option value="transferencia">Transferencia</option>
-        <option value="efectivo">Efectivo</option>
         <option value="paypal">PayPal</option>
     </select>
 
@@ -37,24 +35,6 @@
         </ul>
     </div>
 
-    <div id="blkTransferencia" class="panel oculto">
-        <h4>Transferencia bancaria</h4>
-        <ul>
-            <li>Banco: CR-123456-001</li>
-            <li>Adjuntar comprobante.</li>
-            <li>AcreditaciÃ³n 24â€“48 h.</li>
-        </ul>
-    </div>
-
-    <div id="blkEfectivo" class="panel oculto">
-        <h4>Efectivo en oficina</h4>
-        <ul>
-            <li>Horarios: Lunâ€“Vie 8:00â€“18:00</li>
-            <li>DirecciÃ³n: San Pedro de la Tigra, Alajuela, Costa Rica</li>
-            <li>Reserva vÃ¡lida 24 h.</li>
-        </ul>
-    </div>
-
     <div id="blkPaypal" class="panel oculto">
         <h4>Pago con PayPal</h4>
         <ul>
@@ -64,7 +44,7 @@
     </div>
 
     <div class="panel_interectivo_tarjeta" id="blkTarjetaPanel">
-        <h4>IngresÃ¡ los datos de tu tarjeta</h4>
+        <h4>Ingresa los datos de tu tarjeta</h4>
         <form id="formTarjeta" action="./procesar-tarjeta.php" method="POST">
             <br>
             <label for="txtNombre">Nombre en la tarjeta:</label>
@@ -81,19 +61,6 @@
             <br><br>
             <button type="submit">Pagar</button>
         </form>
-    </div>
-
-    <div class="panel_interectivo_transferencia" id="blkTransferenciaPanel">
-        <h4>Instrucciones para transferencia bancaria</h4>
-        <p>Por favor, realiza la transferencia a la cuenta indicada y envi­a el comprobante a nuestro correo
-            electrÃ³nico.<strong> (lukeshouse@gmail.com)</strong>, y hacer el simpe al
-            <strong>8678-7471</strong>
-        </p>
-    </div>
-
-    <div class="panel_interectivo_efectivo" id="blkEfectivoPanel">
-        <h4>Instrucciones para pago en efectivo</h4>
-        <p>Visita nuestra oficina en el horario indicado para completar tu pago en efectivo.</p>
     </div>
 
     <div class="panel_interectivo_paypal" id="blkPaypalPanel">
