@@ -34,14 +34,19 @@
             <div class="calendar-grid" id="calendarDays"></div>
             <div class="calendar-grid" id="calendar"></div>
             <div class="reservation-form" id="reservationForm" style="display:none;">
-                <h3>Reservar noche</h3>
+                <h3>Reservar noche(s)</h3>
                 <p id="selectedDate"></p>
                 <input type="text" id="nombre" placeholder="Tu nombre" required>
                 <input type="email" id="email" placeholder="Tu correo" required>
+                <input type="number" id="noches" placeholder="Cantidad de noches" min="1" max="30" value="1" required>
                 <button id="confirmReservation">Confirmar Reserva</button>
                 <button id="cancelReservation" type="button" style="display:none;">Cancelar Reserva</button>
                 <div class="success-message" id="successMsg" style="display:none;">Reserva realizada con exito</div>
             </div>
+        </div>
+        <div>
+            <legend><strong><a> Nota: </a></strong></legend>
+            <p>Se va a reservar con anticipacion y se te va a confirmar en las proximas 24h. Por favor estar atento a su reserva</p>
         </div>
     </main>
 
@@ -128,6 +133,7 @@
                     const cancelBtn = document.getElementById('cancelReservation');
                     const nombreInput = document.getElementById('nombre');
                     const emailInput = document.getElementById('email');
+                    const nochesInput = document.getElementById('noches');
 
                     document.getElementById('reservationForm').style.display = 'block';
                     document.getElementById('successMsg').style.display = 'none';
@@ -138,16 +144,20 @@
                         cancelBtn.style.display = 'inline-block';
                         nombreInput.style.display = 'none';
                         emailInput.style.display = 'none';
+                        nochesInput.style.display = 'none';
                         nombreInput.removeAttribute('required');
                         emailInput.removeAttribute('required');
+                        nochesInput.removeAttribute('required');
                     } else {
                         document.getElementById('selectedDate').textContent = `Fecha seleccionada: ${day} de ${monthNames[month]} de ${year}`;
                         confirmBtn.style.display = 'inline-block';
                         cancelBtn.style.display = 'none';
                         nombreInput.style.display = 'block';
                         emailInput.style.display = 'block';
+                        nochesInput.style.display = 'block';
                         nombreInput.setAttribute('required', 'required');
                         emailInput.setAttribute('required', 'required');
+                        nochesInput.setAttribute('required', 'required');
                     }
                 });
                 calendarGrid.appendChild(cell);
@@ -176,12 +186,18 @@
         document.getElementById('confirmReservation').onclick = async function () {
             const nombre = document.getElementById('nombre').value.trim();
             const email = document.getElementById('email').value.trim();
+            const noches = parseInt(document.getElementById('noches').value, 10);
+            if (!Number.isInteger(noches) || noches < 1 || noches > 30) {
+                alert('La cantidad de noches debe estar entre 1 y 30.');
+                return;
+            }
+
             if (nombre && email && selectedDate) {
                 try {
                     const response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ fecha: selectedDate, nombre, email })
+                        body: JSON.stringify({ fecha: selectedDate, nombre, email, noches })
                     });
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}`);
@@ -190,10 +206,11 @@
                     if (data.success) {
                         await renderCalendar(currentMonth, currentYear);
                         document.getElementById('reservationForm').style.display = 'block';
-                        document.getElementById('successMsg').textContent = 'Reserva realizada con exito';
+                        document.getElementById('successMsg').textContent = noches > 1 ? `Reserva realizada con exito (${noches} noches)` : 'Reserva realizada con exito';
                         document.getElementById('successMsg').style.display = 'block';
                         document.getElementById('nombre').value = '';
                         document.getElementById('email').value = '';
+                        document.getElementById('noches').value = '1';
                     } else {
                         alert(data.message || 'Error al realizar la reserva');
                     }
@@ -232,8 +249,11 @@
                     document.getElementById('confirmReservation').style.display = 'inline-block';
                     document.getElementById('nombre').style.display = 'block';
                     document.getElementById('email').style.display = 'block';
+                    document.getElementById('noches').style.display = 'block';
                     document.getElementById('nombre').setAttribute('required', 'required');
                     document.getElementById('email').setAttribute('required', 'required');
+                    document.getElementById('noches').setAttribute('required', 'required');
+                    document.getElementById('noches').value = '1';
                 } else {
                     alert(data.message || 'No se pudo cancelar la reserva');
                 }

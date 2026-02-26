@@ -5,6 +5,7 @@ require_once __DIR__ . '/admin-common.php';
 $showAdminDbPanel = admin_is_owner();
 
 $dbError = null;
+$dbWarnings = [];
 $dbStats = [
     'users' => 0,
     'reservations' => 0,
@@ -12,53 +13,77 @@ $dbStats = [
 ];
 $nextReservations = [];
 
-try {
-    $dbHost = $DB_CONSUSLT ?? $DB_CONSULT ?? $DB_HOSTNAME;
-    $dbName = $DB_TEXT ?? $DB_NAME;
-    $dbPass = $D_ANSWER ?? $DB_ANSWER ?? $DB_PASSWORD;
-    $dbUser = $DB_USERNAME ?? 'root';
+if ($showAdminDbPanel) {
+    try {
+        $conn = admin_db_connect();
 
-    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+        $usersTable = admin_first_table($conn, ['users']);
+        $reservationsTable = admin_first_table($conn, ['reservations', 'reservas']);
+        $cardsTable = admin_first_table($conn, ['cards', 'ValidacionTarjetas', 'tarjetas']);
 
-    if ($conn->connect_error) {
-        throw new RuntimeException('Error de conexion: ' . $conn->connect_error);
-    }
-
-    $conn->set_charset('utf8mb4');
-
-    $usersResult = $conn->query('SELECT COUNT(*) AS total FROM users');
-    if ($usersResult && $row = $usersResult->fetch_assoc()) {
-        $dbStats['users'] = (int) $row['total'];
-    }
-
-    $reservationsResult = $conn->query("SELECT COUNT(*) AS total FROM reservations WHERE estado = 'confirmada'");
-    if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
-        $dbStats['reservations'] = (int) $row['total'];
-    }
-
-    $cardsResult = $conn->query('SELECT COUNT(*) AS total FROM cards');
-    if ($cardsResult && $row = $cardsResult->fetch_assoc()) {
-        $dbStats['cards'] = (int) $row['total'];
-    }
-
-    $nextReservationsQuery = "
-        SELECT nombre, fecha, estado
-        FROM reservations
-        WHERE fecha >= CURDATE() AND estado = 'confirmada'
-        ORDER BY fecha ASC
-        LIMIT 5
-    ";
-
-    $nextReservationsResult = $conn->query($nextReservationsQuery);
-    if ($nextReservationsResult) {
-        while ($reservation = $nextReservationsResult->fetch_assoc()) {
-            $nextReservations[] = $reservation;
+        if ($usersTable !== null) {
+            $usersResult = $conn->query("SELECT COUNT(*) AS total FROM `{$usersTable}`");
+            if ($usersResult && $row = $usersResult->fetch_assoc()) {
+                $dbStats['users'] = (int) $row['total'];
+            }
+        } else {
+            $dbWarnings[] = "La tabla 'users' no existe.";
         }
-    }
 
-    $conn->close();
-} catch (Throwable $e) {
-    $dbError = $e->getMessage();
+        if ($reservationsTable !== null) {
+            $reservationsCountQuery = admin_has_column($conn, $reservationsTable, 'estado')
+                ? "SELECT COUNT(*) AS total FROM `{$reservationsTable}` WHERE estado = 'confirmada'"
+                : "SELECT COUNT(*) AS total FROM `{$reservationsTable}`";
+            $reservationsResult = $conn->query($reservationsCountQuery);
+            if ($reservationsResult && $row = $reservationsResult->fetch_assoc()) {
+                $dbStats['reservations'] = (int) $row['total'];
+            }
+        } else {
+            $dbWarnings[] = "No existe una tabla de reservas (reservations/reservas).";
+        }
+
+        if ($cardsTable !== null) {
+            $cardsResult = $conn->query("SELECT COUNT(*) AS total FROM `{$cardsTable}`");
+            if ($cardsResult && $row = $cardsResult->fetch_assoc()) {
+                $dbStats['cards'] = (int) $row['total'];
+            }
+        } else {
+            $dbWarnings[] = "No existe una tabla de tarjetas (cards/ValidacionTarjetas/tarjetas).";
+        }
+
+        if (
+            $reservationsTable !== null
+            && admin_has_column($conn, $reservationsTable, 'nombre')
+            && admin_has_column($conn, $reservationsTable, 'fecha')
+        ) {
+            $statusColumn = admin_has_column($conn, $reservationsTable, 'estado')
+                ? 'estado'
+                : "'confirmada' AS estado";
+            $nextReservationsQuery = "
+                SELECT nombre, fecha, estado
+                FROM (
+                    SELECT nombre, fecha, {$statusColumn}
+                    FROM `{$reservationsTable}`
+                ) AS r
+                WHERE fecha >= CURDATE() AND estado = 'confirmada'
+                ORDER BY fecha ASC
+                LIMIT 5
+            ";
+
+            $nextReservationsResult = $conn->query($nextReservationsQuery);
+            if ($nextReservationsResult) {
+                while ($reservation = $nextReservationsResult->fetch_assoc()) {
+                    $nextReservations[] = $reservation;
+                }
+            }
+        } elseif ($reservationsTable !== null) {
+            $dbWarnings[] = "La tabla '{$reservationsTable}' no tiene columnas compatibles (nombre/fecha).";
+        }
+
+        $conn->close();
+    } catch (Throwable $e) {
+        $dbError = $e->getMessage();
+    }
 }
 
 ?>
@@ -249,7 +274,7 @@ try {
             <ul class="nav-links">
                 <li><a class="navbar-link" href="index.php">Inicio</a></li>
                 <li><a class="navbar-link" href="informacion.php">Informacion</a></li>
-                <li><a class="navbar-link" href="galeria.php">Galeri­a</a></li>
+                <li><a class="navbar-link" href="galeria.php">Galeria</a></li>
                 <li><a class="navbar-link" href="calendario.php">Reservar</a></li>
                 <li><a class="navbar-link" href="recomendaciones.php" id="chatbot-shortcut" title="Chat de Ayuda"><i class="fas fa-comments"></i></a></li>
             </ul>
@@ -270,26 +295,42 @@ try {
         <section class="db-panel">
             <h2>Datos en tiempo real desde MySQL</h2>
             <div id="db-status" class="db-context-inline">
-                <p>Cargando datos de base de datos...</p>
+                <?php if ($dbError !== null): ?>
+                <p class="db-context-error">Error de conexion a BD: <?php echo h($dbError); ?></p>
+                <?php elseif (count($dbWarnings) > 0): ?>
+                <p class="db-context-error"><?php echo h(implode(' ', $dbWarnings)); ?></p>
+                <?php else: ?>
+                <p>Conectado a MySQL en tiempo real.</p>
+                <?php endif; ?>
             </div>
             <div class="db-stats">
                 <article class="db-stat">
                     <strong>Usuarios registrados</strong>
-                    <span id="db-users">0</span>
+                    <span id="db-users"><?php echo (int) $dbStats['users']; ?></span>
                 </article>
                 <article class="db-stat">
                     <strong>Reservas totales</strong>
-                    <span id="db-reservations">0</span>
+                    <span id="db-reservations"><?php echo (int) $dbStats['reservations']; ?></span>
                 </article>
                 <article class="db-stat">
                     <strong>Tarjetas guardadas</strong>
-                    <span id="db-cards">0</span>
+                    <span id="db-cards"><?php echo (int) $dbStats['cards']; ?></span>
                 </article>
             </div>
 
-            <h3>Próximas reservas</h3>
+            <h3>Proximas reservas</h3>
             <ul id="db-next-reservations" class="reservation-list">
-                <li>Cargando reservas...</li>
+                <?php if (count($nextReservations) === 0): ?>
+                <li>No hay reservas futuras registradas.</li>
+                <?php else: ?>
+                <?php foreach ($nextReservations as $reservation): ?>
+                <li>
+                    <strong><?php echo h($reservation['nombre'] ?? ''); ?></strong>
+                    - <?php echo h($reservation['fecha'] ?? ''); ?>
+                    (<?php echo h($reservation['estado'] ?? 'confirmada'); ?>)
+                </li>
+                <?php endforeach; ?>
+                <?php endif; ?>
             </ul>
         </section>
         <?php endif; ?>
@@ -331,81 +372,6 @@ try {
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const dbEndpoint = window.RECOMMENDATIONS_API_ENDPOINT || './back/PHP/recomendaciones_data.php';
-            const escapeHtml = (value) => {
-                const div = document.createElement('div');
-                div.textContent = String(value ?? '');
-                return div.innerHTML;
-            };
-
-            const loadDbPanelData = async () => {
-                const statusEl = document.getElementById('db-status');
-                const usersEl = document.getElementById('db-users');
-                const reservationsEl = document.getElementById('db-reservations');
-                const cardsEl = document.getElementById('db-cards');
-                const listEl = document.getElementById('db-next-reservations');
-
-                try {
-                    const response = await fetch(dbEndpoint, {
-                        method: 'GET',
-                        headers: { 'Accept': 'application/json' },
-                        cache: 'no-store'
-                    });
-
-                    let data = null;
-                    try {
-                        data = await response.json();
-                    } catch (parseError) {
-                        if (!response.ok) {
-                            throw new Error('HTTP ' + response.status);
-                        }
-                        throw new Error('Respuesta invalida del servidor');
-                    }
-
-                    if (!response.ok) {
-                        throw new Error(data?.error || ('HTTP ' + response.status));
-                    }
-
-                    if (!data.success) {
-                        throw new Error(data.error || 'No se pudo obtener informacion de la base de datos');
-                    }
-
-                    const stats = data.stats || {};
-                    const nextReservations = Array.isArray(data.nextReservations) ? data.nextReservations : [];
-                    const warnings = Array.isArray(data.warnings) ? data.warnings : [];
-
-                    usersEl.textContent = Number(stats.users || 0);
-                    reservationsEl.textContent = Number(stats.reservations || 0);
-                    cardsEl.textContent = Number(stats.cards || 0);
-                    statusEl.innerHTML = warnings.length > 0
-                        ? `<p class="db-context-error">${escapeHtml(warnings.join(' '))}</p>`
-                        : '<p>Conectado a MySQL en tiempo real.</p>';
-
-                    if (nextReservations.length === 0) {
-                        listEl.innerHTML = '<li>No hay reservas futuras registradas.</li>';
-                        return;
-                    }
-
-                    listEl.innerHTML = nextReservations.map((reservation) => `
-                        <li>
-                            <strong>${escapeHtml(reservation.nombre)}</strong>
-                            - ${escapeHtml(reservation.fecha)}
-                            (${escapeHtml(reservation.estado)})
-                        </li>
-                    `).join('');
-                } catch (error) {
-                    if (statusEl) {
-                        statusEl.innerHTML = `<p class="db-context-error">Error de conexión a BD: ${escapeHtml(error.message)}</p>`;
-                    }
-                    if (listEl) {
-                        listEl.innerHTML = '<li>No se pudieron cargar las reservas.</li>';
-                    }
-                }
-            };
-
-            <?php if ($showAdminDbPanel): ?>
-            loadDbPanelData();
-            <?php endif; ?>
             if (window.aiRecommendations) {
                 window.aiRecommendations.createRecommendationWidget('recommendations-widget');
             } else {
