@@ -1,5 +1,3 @@
-
-//alert(90900);
 const openPanelBtn = document.getElementById('openPanelBtn');
 const overlay = document.getElementById('authPanel');
 const tabLogin = document.getElementById('tab-login');
@@ -32,16 +30,14 @@ function closePanel() {
   document.body.style.overflow = '';
 }
 
-
 overlay.addEventListener('click', (e) => {
   if (e.target === overlay) {
     closePanel();
   }
 });
 
-
 document.addEventListener('keydown', (e) => {
-  if (e.key === "Escape" && overlay.style.display === 'flex') {
+  if (e.key === 'Escape' && overlay.style.display === 'flex') {
     closePanel();
   }
 });
@@ -92,7 +88,7 @@ function clearMessages() {
   registerMessage.style.color = 'red';
 }
 
-formLogin.addEventListener('submit', e => {
+formLogin.addEventListener('submit', async (e) => {
   e.preventDefault();
   clearMessages();
 
@@ -104,55 +100,88 @@ formLogin.addEventListener('submit', e => {
     return;
   }
 
-  const lsEmail = localStorage.getItem('email');
-  const lsPw = localStorage.getItem('password');
+  const body = new URLSearchParams();
+  body.append('login-email', email);
+  body.append('login-password', password);
 
-  if (lsEmail == email && lsPw == password) {
-    alert('Bienvenido ' + email)
-    //loginMessage.style.color = 'green';
-    //loginMessage.textContent = '¡Inicio de sesión exitoso! (simulado)';
+  try {
+    const response = await fetch('./login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString()
+    });
 
-    closePanel();
-    window.location.href = 'index.php';
-  } else {
-    alert('No registrado');
-    //loginMessage.style.color = 'red';
-    //loginMessage.textContent = '¡Usuario invalido';
+    const data = await response.json();
+
+    if (data.success) {
+      loginMessage.style.color = 'green';
+      loginMessage.textContent = data.mensaje || 'Inicio de sesion exitoso.';
+      setTimeout(() => {
+        closePanel();
+        window.location.href = 'index.php';
+      }, 500);
+      return;
+    }
+
+    loginMessage.textContent = data.mensaje || 'Credenciales invalidas.';
+  } catch (error) {
+    loginMessage.textContent = 'No se pudo conectar con el servidor.';
   }
-
 });
 
-/*formRegister.addEventListener('submit', e => {
+formRegister.addEventListener('submit', async (e) => {
   e.preventDefault();
   clearMessages();
 
+  const username = formRegister['username'].value.trim();
   const name = formRegister['register-name'].value.trim();
   const email = formRegister['register-email'].value.trim();
   const password = formRegister['register-password'].value;
   const confirmPassword = formRegister['register-confirm-password'].value;
 
-  if (!name || !email || !password || !confirmPassword) {
+  if (!username || !name || !email || !password || !confirmPassword) {
     registerMessage.textContent = 'Por favor, completa todos los campos.';
     return;
   }
+
   if (password.length < 6) {
-    registerMessage.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+    registerMessage.textContent = 'La contrasena debe tener al menos 6 caracteres.';
     return;
   }
+
   if (password !== confirmPassword) {
-    registerMessage.textContent = 'Las contraseñas no coinciden.';
+    registerMessage.textContent = 'Las contrasenas no coinciden.';
     return;
   }
 
-  console.log('email', email, 'password', password);
-  localStorage.setItem('email', email);
-  localStorage.setItem('password', password);
+  const body = new URLSearchParams();
+  body.append('username', username);
+  body.append('register-name', name);
+  body.append('register-email', email);
+  body.append('register-password', password);
 
-  registerMessage.style.color = 'green';
-  registerMessage.textContent = '¡Registro exitoso!';
-  formRegister.reset();
-});*/
-//formLogin.addEventListener('submit', closePanel);
-//formLogin.addEventListener('submit', () => {
-//window.location.href = 'index.php';
-//});
+  try {
+    const response = await fetch('./registro.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString()
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      registerMessage.style.color = 'green';
+      registerMessage.textContent = data.mensaje || 'Registro exitoso.';
+      formRegister.reset();
+      setTimeout(() => {
+        closePanel();
+        window.location.href = 'index.php';
+      }, 500);
+      return;
+    }
+
+    registerMessage.textContent = data.mensaje || 'No se pudo registrar el usuario.';
+  } catch (error) {
+    registerMessage.textContent = 'No se pudo conectar con el servidor.';
+  }
+});

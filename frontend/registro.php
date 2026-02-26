@@ -21,19 +21,74 @@ function ensure_users_table(mysqli $conn): bool {
     return (bool) $conn->query($sql);
 }
 
+function ensure_users_password_column(mysqli $conn): bool {
+    $result = $conn->query("SHOW COLUMNS FROM `users` LIKE 'password'");
+    if (!($result instanceof mysqli_result) || $result->num_rows === 0) {
+        return false;
+    }
+
+    $column = $result->fetch_assoc();
+    $type = isset($column['Type']) ? strtolower((string) $column['Type']) : '';
+
+    if (preg_match('/^varchar\((\d+)\)$/', $type, $m)) {
+        $length = (int) $m[1];
+        if ($length >= 255) {
+            return true;
+        }
+    } elseif ($type === 'text' || $type === 'longtext') {
+        return true;
+    }
+
+    return (bool) $conn->query("ALTER TABLE `users` MODIFY `password` VARCHAR(255) NOT NULL");
+}
+
+function ensure_access_logs_table(mysqli $conn): bool {
+    $sql = "
+        CREATE TABLE IF NOT EXISTS `access_logs` (
+            `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `evento` ENUM('registro', 'login') NOT NULL,
+            `email` VARCHAR(100) NULL,
+            `username` VARCHAR(50) NULL,
+            `fullname` VARCHAR(120) NULL,
+            `resultado` ENUM('ok', 'error') NOT NULL,
+            `mensaje` VARCHAR(255) NULL,
+            `ip` VARCHAR(45) NULL,
+            `user_agent` VARCHAR(255) NULL,
+            `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            KEY `idx_access_logs_evento` (`evento`),
+            KEY `idx_access_logs_email` (`email`),
+            KEY `idx_access_logs_created_at` (`created_at`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ";
+
+    return (bool) $conn->query($sql);
+}
+
+function log_access(mysqli $conn, string $evento, ?string $email, ?string $username, ?string $fullname, string $resultado, string $mensaje): void {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+
+    $stmt = $conn->prepare("INSERT INTO access_logs (evento, email, username, fullname, resultado, mensaje, ip, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    if (!$stmt) {
+        return;
+    }
+
+    $stmt->bind_param('ssssssss', $evento, $email, $username, $fullname, $resultado, $mensaje, $ip, $userAgent);
+    $stmt->execute();
+    $stmt->close();
+}
+
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         echo json_encode(["success" => false, "mensaje" => "Metodo no permitido"]);
         exit();
     }
 
-    if (
-        empty($_POST['username']) || empty($_POST['register-email']) ||
-        empty($_POST['register-password']) || empty($_POST['register-name'])
-    ) {
-        echo json_encode(["success" => false, "mensaje" => "Todos los campos son requeridos"]);
-        exit();
-    }
+    $username = isset($_POST['username']) ? trim((string) $_POST['username']) : '';
+    $email = isset($_POST['register-email']) ? trim((string) $_POST['register-email']) : '';
+    $fullName = isset($_POST['register-name']) ? trim((string) $_POST['register-name']) : '';
+    $plainPassword = isset($_POST['register-password']) ? (string) $_POST['register-password'] : '';
 
     $conn = new mysqli($DB_HOSTNAME, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
@@ -49,18 +104,40 @@ try {
         exit();
     }
 
-    $hashed_password = password_hash($_POST['register-password'], PASSWORD_DEFAULT);
+    if (!ensure_users_password_column($conn)) {
+        echo json_encode(["success" => false, "mensaje" => "No se pudo ajustar la columna password en users: " . $conn->error]);
+        exit();
+    }
+
+    if (!ensure_access_logs_table($conn)) {
+        echo json_encode(["success" => false, "mensaje" => "No se pudo crear/verificar la tabla access_logs: " . $conn->error]);
+        exit();
+    }
+
+    if ($username === '' || $email === '' || $plainPassword === '' || $fullName === '') {
+        $msg = 'Todos los campos son requeridos';
+        log_access($conn, 'registro', $email !== '' ? $email : null, $username !== '' ? $username : null, $fullName !== '' ? $fullName : null, 'error', $msg);
+        echo json_encode(["success" => false, "mensaje" => $msg]);
+        exit();
+    }
+
+    $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("INSERT INTO users (email, password, fullname, username) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $_POST['register-email'], $hashed_password, $_POST['register-name'], $_POST['username']);
+    $stmt->bind_param("ssss", $email, $hashedPassword, $fullName, $username);
 
     if ($stmt->execute()) {
+        log_access($conn, 'registro', $email, $username, $fullName, 'ok', 'Registro exitoso');
         echo json_encode(["success" => true, "mensaje" => "Registro exitoso"]);
     } else {
         if ($conn->errno == 1062) {
-            echo json_encode(["success" => false, "mensaje" => "El email o usuario ya esta registrado"]);
+            $msg = 'El email o usuario ya esta registrado';
+            log_access($conn, 'registro', $email, $username, $fullName, 'error', $msg);
+            echo json_encode(["success" => false, "mensaje" => $msg]);
         } else {
-            echo json_encode(["success" => false, "mensaje" => "Error al guardar: " . $stmt->error]);
+            $msg = 'Error al guardar: ' . $stmt->error;
+            log_access($conn, 'registro', $email, $username, $fullName, 'error', $msg);
+            echo json_encode(["success" => false, "mensaje" => $msg]);
         }
     }
 

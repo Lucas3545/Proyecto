@@ -1,4 +1,4 @@
-﻿CREATE DATABASE IF NOT EXISTS `lukes`
+CREATE DATABASE IF NOT EXISTS `lukes`
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
 
@@ -14,6 +14,26 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_users_email` (`email`),
   UNIQUE KEY `uniq_users_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `users`
+  MODIFY `password` VARCHAR(255) NOT NULL;
+
+CREATE TABLE IF NOT EXISTS `access_logs` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `evento` ENUM('registro', 'login') NOT NULL,
+  `email` VARCHAR(100) NULL,
+  `username` VARCHAR(50) NULL,
+  `fullname` VARCHAR(120) NULL,
+  `resultado` ENUM('ok', 'error') NOT NULL,
+  `mensaje` VARCHAR(255) NULL,
+  `ip` VARCHAR(45) NULL,
+  `user_agent` VARCHAR(255) NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_access_logs_evento` (`evento`),
+  KEY `idx_access_logs_email` (`email`),
+  KEY `idx_access_logs_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `reservations` (
