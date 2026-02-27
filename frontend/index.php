@@ -1,3 +1,27 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$displayName = '';
+$email = '';
+
+if (!empty($_COOKIE['lh_user'])) {
+    $displayName = trim((string) $_COOKIE['lh_user']);
+} elseif (!empty($_SESSION['username'])) {
+    $displayName = trim((string) $_SESSION['username']);
+}
+
+if (!empty($_COOKIE['lh_email'])) {
+    $email = trim((string) $_COOKIE['lh_email']);
+} elseif (!empty($_SESSION['user_email'])) {
+    $email = trim((string) $_SESSION['user_email']);
+}
+
+$isLoggedIn = $displayName !== '';
+$userKeySource = $email !== '' ? $email : $displayName;
+$userKey = trim((string) preg_replace('/[^a-z0-9]+/i', '_', strtolower($userKeySource)), '_');
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -16,7 +40,7 @@
         <section>
             <button class="btn-reserve" onclick="location.href='calendario.php'"><strong>Reservar
                     Ahora</strong></button>
-            <button class="btn-reserve" onclick="location.href='recomendaciones.php'"><strong>Ver recomendaciones</strong></button>
+            <button class="btn-reserve" onclick="if(window.LH_AUTH && window.LH_AUTH.loggedIn===true){ if(!(window.openRecommendationsChat && window.openRecommendationsChat())){location.href='recomendaciones.php';} } else { location.href='panel-de-acceso.php'; }"><strong>Ver recomendaciones</strong></button>
         </section>
         <?php include './includes/navbar-main.php'; ?>
     </header>
@@ -88,7 +112,14 @@
         </section>
     </main>
     <?php include './includes/footer.php'; ?>
-    
+
+    <script>
+        window.LH_CHATBOT_ENABLED = true;
+        window.LH_AUTH = {
+            loggedIn: <?php echo $isLoggedIn ? 'true' : 'false'; ?>,
+            userKey: <?php echo json_encode($userKey, JSON_UNESCAPED_UNICODE); ?>
+        };
+    </script>
     <script src="./js/ai-chatbot.js"></script>
     <script src="./js/ai-recommendations.js"></script>
     <script src="./js/ai-config.js"></script>

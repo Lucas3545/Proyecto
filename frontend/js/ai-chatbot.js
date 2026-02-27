@@ -4,9 +4,17 @@ class AIChatbot {
         this.apiEndpoint = 'https://api.openai.com/v1/chat/completions';
         this.chatEndpoint = options.chatEndpoint || window.CHATBOT_API_ENDPOINT || './ai-chatbot-proxy.php';
         this.useProxy = options.useProxy !== undefined ? options.useProxy : true;
+        this.persistHistory = options.persistHistory === true;
+        this.storageKey = options.storageKey || null;
+        this.maxStoredMessages = Number.isFinite(options.maxStoredMessages) ? options.maxStoredMessages : 40;
         this.conversationHistory = [];
         this.isOpen = false;
         this.isTyping = false;
+        this.isRestoringHistory = false;
+        this.recommendationFlow = {
+            interests: [],
+            difficulty: 'todas'
+        };
 
         this.systemContext = `Eres un asistente virtual amigable para Luke's House Casa Tranquila, una cabana turistica ubicada en La Fortuna, Costa Rica.
 
@@ -38,7 +46,72 @@ Manten respuestas concisas y utiles. Si no sabes algo especifico, sugiere contac
     init() {
         this.createChatbotUI();
         this.attachEventListeners();
-        this.addWelcomeMessage();
+
+        const restored = this.restoreHistory();
+        if (!restored) {
+            this.addWelcomeMessage();
+        }
+    }
+
+    getHistoryStorageKey() {
+        if (this.storageKey) return this.storageKey;
+        return null;
+    }
+
+    restoreHistory() {
+        if (!this.persistHistory) return false;
+
+        const key = this.getHistoryStorageKey();
+        if (!key) return false;
+
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return false;
+
+            const parsed = JSON.parse(raw);
+            if (!parsed || !Array.isArray(parsed.conversationHistory)) return false;
+
+            this.conversationHistory = parsed.conversationHistory
+                .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+                .slice(-Math.max(0, this.maxStoredMessages));
+
+            if (this.conversationHistory.length === 0) return false;
+
+            this.isRestoringHistory = true;
+            this.conversationHistory.forEach(m => {
+                this.addMessage(m.content, m.role === 'user' ? 'user' : 'bot');
+            });
+            this.isRestoringHistory = false;
+
+            return true;
+        } catch (error) {
+            console.error('No se pudo restaurar el historial del chat:', error);
+            this.isRestoringHistory = false;
+            return false;
+        }
+    }
+
+    saveHistory() {
+        if (!this.persistHistory) return;
+
+        const key = this.getHistoryStorageKey();
+        if (!key) return;
+
+        try {
+            const trimmed = this.conversationHistory.slice(-Math.max(0, this.maxStoredMessages));
+            localStorage.setItem(key, JSON.stringify({ conversationHistory: trimmed }));
+        } catch (error) {
+            console.error('No se pudo guardar el historial del chat:', error);
+        }
+    }
+
+    appendToHistory(role, content) {
+        if (role !== 'user' && role !== 'assistant') return;
+        if (typeof content !== 'string' || content.trim() === '') return;
+
+        this.conversationHistory.push({ role, content });
+        this.conversationHistory = this.conversationHistory.slice(-Math.max(0, this.maxStoredMessages));
+        this.saveHistory();
     }
 
     createChatbotUI() {
@@ -87,6 +160,7 @@ Manten respuestas concisas y utiles. Si no sabes algo especifico, sugiere contac
                         <button class="quick-action-btn" data-message="Como puedo hacer una reserva?">Reservar</button>
                         <button class="quick-action-btn" data-message="Que atracciones hay cerca?">Atracciones</button>
                         <button class="quick-action-btn" data-message="Cuales son los precios?">Precios</button>
+                        <button class="quick-action-btn" data-action="recommendations">Recomendaciones</button>
                     </div>
                 </div>
             </div>
@@ -111,10 +185,22 @@ Manten respuestas concisas y utiles. Si no sabes algo especifico, sugiere contac
 
         quickActionBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+                const action = btn.getAttribute('data-action');
+                if (action === 'recommendations') {
+                    this.startRecommendationsFlow();
+                    return;
+                }
+
                 const message = btn.getAttribute('data-message');
                 this.sendMessage(message);
             });
         });
+    }
+
+    openChat() {
+        if (!this.isOpen) {
+            this.toggleChat();
+        }
     }
 
     toggleChat() {
@@ -162,10 +248,7 @@ Manten respuestas concisas y utiles. Si no sabes algo especifico, sugiere contac
         input.value = '';
         this.addMessage(message, 'user');
 
-        this.conversationHistory.push({
-            role: 'user',
-            content: message
-        });
+        this.appendToHistory('user', message);
 
         this.showTypingIndicator();
 
@@ -174,14 +257,12 @@ Manten respuestas concisas y utiles. Si no sabes algo especifico, sugiere contac
             this.hideTypingIndicator();
             this.addMessage(response, 'bot');
 
-            this.conversationHistory.push({
-                role: 'assistant',
-                content: response
-            });
+            this.appendToHistory('assistant', response);
         } catch (error) {
             this.hideTypingIndicator();
             console.error('Error al comunicarse con la IA:', error);
             this.addMessage('Lo siento, hubo un error al procesar tu mensaje. Intenta de nuevo o contacta al propietario.', 'bot', true);
+            this.appendToHistory('assistant', 'Lo siento, hubo un error al procesar tu mensaje. Intenta de nuevo o contacta al propietario.');
         }
     }
 
@@ -296,12 +377,178 @@ Manten respuestas concisas y utiles. Si no sabes algo especifico, sugiere contac
         this.isTyping = false;
     }
 
+    addChoiceMessage(text, choices, onChoose) {
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chatbot-message bot-message';
+
+        const timestamp = new Date().toLocaleTimeString('es-CR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const choicesHtml = Array.isArray(choices) && choices.length > 0
+            ? `<div class="chatbot-choices">
+                ${choices.map(c => `<button type="button" class="chatbot-choice-btn" data-choice="${String(c.value)}">${c.label}</button>`).join('')}
+               </div>`
+            : '';
+
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                ${this.formatMessage(text)}
+                ${choicesHtml}
+            </div>
+            <div class="message-time">${timestamp}</div>
+        `;
+
+        if (choicesHtml) {
+            const buttons = messageDiv.querySelectorAll('.chatbot-choice-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.disabled = true);
+                    const value = btn.getAttribute('data-choice');
+                    const label = btn.textContent || value;
+                    onChoose(value, label);
+                });
+            });
+        }
+
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    startRecommendationsFlow() {
+        this.openChat();
+        this.recommendationFlow = { interests: [], difficulty: 'todas' };
+
+        this.addChoiceMessage(
+            'Perfecto. Elige lo que te interesa y te muestro opciones:',
+            [
+                { label: '🏔️ Aventura', value: 'aventura' },
+                { label: '🌿 Naturaleza', value: 'naturaleza' },
+                { label: '🧘 Relajación', value: 'relajacion' },
+                { label: '👨‍👩‍👧 Familia', value: 'familia' }
+            ],
+            (value, label) => {
+                this.recommendationFlow.interests = [value];
+                this.addMessage(label, 'user');
+                this.appendToHistory('user', label);
+                this.askRecommendationsDifficulty();
+            }
+        );
+    }
+
+    askRecommendationsDifficulty() {
+        this.addChoiceMessage(
+            '¿Qué nivel de dificultad prefieres?',
+            [
+                { label: 'Todas', value: 'todas' },
+                { label: 'Fácil', value: 'baja' },
+                { label: 'Moderado', value: 'media' },
+                { label: 'Difícil', value: 'alta' }
+            ],
+            (value, label) => {
+                this.recommendationFlow.difficulty = value;
+                this.addMessage(label, 'user');
+                this.appendToHistory('user', label);
+                this.showRecommendations();
+            }
+        );
+    }
+
+    async showRecommendations() {
+        const preferences = {
+            interests: this.recommendationFlow.interests,
+            difficulty: this.recommendationFlow.difficulty,
+            budget: null
+        };
+
+        const recommender = window.aiRecommendations
+            || (window.AIRecommendations ? new window.AIRecommendations(this.apiKey) : null);
+
+        if (!recommender || typeof recommender.getPersonalizedRecommendations !== 'function') {
+            this.addMessage('Lo siento, el sistema de recomendaciones no esta disponible en este momento.', 'bot', true);
+            this.appendToHistory('assistant', 'Lo siento, el sistema de recomendaciones no esta disponible en este momento.');
+            return;
+        }
+
+        this.showTypingIndicator();
+        try {
+            const recommendations = await recommender.getPersonalizedRecommendations(preferences);
+            this.hideTypingIndicator();
+
+            if (!Array.isArray(recommendations) || recommendations.length === 0) {
+                this.addMessage('No encontre recomendaciones con esas preferencias. Prueba otra categoria.', 'bot');
+                this.appendToHistory('assistant', 'No encontre recomendaciones con esas preferencias. Prueba otra categoria.');
+                this.startRecommendationsFlow();
+                return;
+            }
+
+            const text = recommendations.map((r, i) => {
+                const duration = r.duration ? `⏱️ ${r.duration}` : '';
+                const price = r.price ? `💲 ${r.price}` : '';
+                const meta = [duration, price].filter(Boolean).join(' | ');
+                return `${i + 1}) ${r.name}\n${r.description}${meta ? `\n${meta}` : ''}`;
+            }).join('\n\n');
+
+            this.addMessage(`Estas son algunas opciones para ti:\n\n${text}`, 'bot');
+            this.appendToHistory('assistant', `Estas son algunas opciones para ti:\n\n${text}`);
+
+            this.addChoiceMessage(
+                '¿Que quieres hacer ahora?',
+                [
+                    { label: 'Más opciones', value: 'more' },
+                    { label: 'Cambiar categoría', value: 'change' },
+                    { label: 'Ver información', value: 'info' }
+                ],
+                (value) => {
+                    if (value === 'more') {
+                        this.showRecommendations();
+                        return;
+                    }
+                    if (value === 'change') {
+                        this.startRecommendationsFlow();
+                        return;
+                    }
+                    if (value === 'info') {
+                        window.location.href = 'informacion.php';
+                    }
+                }
+            );
+        } catch (error) {
+            this.hideTypingIndicator();
+            console.error('Error al obtener recomendaciones:', error);
+            this.addMessage('Lo siento, no pude generar recomendaciones ahora mismo. Intenta de nuevo en un momento.', 'bot', true);
+            this.appendToHistory('assistant', 'Lo siento, no pude generar recomendaciones ahora mismo. Intenta de nuevo en un momento.');
+        }
+    }
+
     clearHistory() {
         this.conversationHistory = [];
         const messagesContainer = document.getElementById('chatbot-messages');
         messagesContainer.innerHTML = '';
         this.addWelcomeMessage();
+
+        if (this.persistHistory) {
+            const key = this.getHistoryStorageKey();
+            if (key) {
+                try {
+                    localStorage.removeItem(key);
+                } catch (error) {
+                    console.error('No se pudo limpiar el historial guardado:', error);
+                }
+            }
+        }
     }
 }
 
 window.AIChatbot = AIChatbot;
+
+window.openRecommendationsChat = function () {
+    if (!window.chatbot || typeof window.chatbot.startRecommendationsFlow !== 'function') {
+        return false;
+    }
+
+    window.chatbot.startRecommendationsFlow();
+    return true;
+};
