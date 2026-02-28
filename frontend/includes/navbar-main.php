@@ -3,27 +3,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <?php endif; ?>
 
+<?php require_once __DIR__ . '/user-context.php'; ?>
+
 <nav class="navbar">
-    <?php
-    $displayName = '';
-    $email = '';
-
-    if (!empty($_COOKIE['lh_user'])) {
-        $displayName = trim((string) $_COOKIE['lh_user']);
-    } elseif (!empty($_SESSION['username'])) {
-        $displayName = trim((string) $_SESSION['username']);
-    }
-
-    if (!empty($_COOKIE['lh_email'])) {
-        $email = trim((string) $_COOKIE['lh_email']);
-    } elseif (!empty($_SESSION['user_email'])) {
-        $email = trim((string) $_SESSION['user_email']);
-    }
-
-    $isLoggedIn = $displayName !== '';
-    $ownerEmail = 'lucaszv2006@gmail.com';
-    $isOwner = $isLoggedIn && strcasecmp($email, $ownerEmail) === 0;
-    ?>
 
     <div class="logo">Welcome to Luke's Tiny House</div>
 

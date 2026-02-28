@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/estilos-galeria.css">
-    <title>Galería</title>
-    <link rel="icon" href="./img/logo-de-lukes-house-casa-tranquila.webp" type="image/webp">
-</head>
-
-<body>
+﻿<?php
+$pageTitle = 'GalerÃ­a';
+$pageStyles = ['./css/estilos-galeria.css'];
+include __DIR__ . '/includes/page-start.php';
+?>
     <header>
-        <h1>Galería</h1>
+        <h1>GalerÃ­a</h1>
     </header>
     <main>
         <div class="header">
@@ -42,6 +35,10 @@
 
     <?php include './includes/footer.php'; ?>
     <script src="./js/galeria.js"></script>
-</body>
+<?php include __DIR__ . '/includes/page-end.php'; ?>
 
-</html>
+
+
+
+
+

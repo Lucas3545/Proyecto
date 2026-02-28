@@ -1,23 +1,4 @@
-<?php
-$displayName = '';
-$email = '';
-
-if (!empty($_COOKIE['lh_user'])) {
-    $displayName = trim((string) $_COOKIE['lh_user']);
-} elseif (!empty($_SESSION['username'])) {
-    $displayName = trim((string) $_SESSION['username']);
-}
-
-if (!empty($_COOKIE['lh_email'])) {
-    $email = trim((string) $_COOKIE['lh_email']);
-} elseif (!empty($_SESSION['user_email'])) {
-    $email = trim((string) $_SESSION['user_email']);
-}
-
-$isLoggedIn = $displayName !== '';
-$ownerEmail = 'lucaszv2006@gmail.com';
-$isOwner = $isLoggedIn && strcasecmp($email, $ownerEmail) === 0;
-?>
+<?php require_once __DIR__ . '/user-context.php'; ?>
 
 <nav class="nav-menu" style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
     <a href="index.php" class="nav-item" title="Inicio">Inicio</a>

@@ -1,15 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="./img/logo-de-lukes-house-casa-tranquila.webp">
-    <link rel="stylesheet" href="./css/seleccion-de-metodo-de-pago.css">
-    <title>Metodo de Pago</title>
-</head>
-
-<body class="contenedor">
+﻿<?php
+$pageTitle = 'Metodo de Pago';
+$pageStyles = ['./css/seleccion-de-metodo-de-pago.css'];
+$pageBodyAttrs = 'class="contenedor"';
+include __DIR__ . '/includes/page-start.php';
+?>
 
     <div class="header">
         <?php include './includes/navbar-simple.php'; ?>
@@ -74,7 +68,10 @@
     <script src="./js/seleccion-de-metodo-de-pago.js"></script>
 
     <?php include './includes/footer.php'; ?>
-</body>
+<?php include __DIR__ . '/includes/page-end.php'; ?>
 
-</html>
+
+
+
+
 

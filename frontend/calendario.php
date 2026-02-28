@@ -1,15 +1,8 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Calendario de Reservas</title>
-    <link rel="stylesheet" href="./css/estilos-calen.css">
-    <link rel="icon" href="./img/logo-de-lukes-house-casa-tranquila.webp">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body>
+﻿<?php
+$pageTitle = 'Calendario de Reservas';
+$pageStyles = ['./css/estilos-calen.css'];
+include __DIR__ . '/includes/page-start.php';
+?>
     <header>
         <h1 class="calendar-title">Calendario de Reservas</h1>
     </header>
@@ -265,7 +258,10 @@
 
         renderCalendar(currentMonth, currentYear);
     </script>
-</body>
+<?php include __DIR__ . '/includes/page-end.php'; ?>
 
-</html>
+
+
+
+
 

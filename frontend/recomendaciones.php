@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/admin-common.php';
 
@@ -87,22 +87,17 @@ if ($showAdminDbPanel) {
 }
 
 ?>
-<!DOCTYPE html>
-
-
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recomendaciones Personalizadas - Luke's House</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="./css/estilos-index.css">
-    <link rel="stylesheet" href="./css/ai-chatbot.css">
-    <link rel="stylesheet" href="./css/ai-recommendations.css">
-    <link type="image/webp" rel="icon" href="./img/logo-de-lukes-house-casa-tranquila.webp">
-    <style>
+<?php
+$pageTitle = 'Recomendaciones Personalizadas - Luke''s House';
+$pageStyles = [
+    'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+    './css/estilos-index.css',
+    './css/ai-chatbot.css',
+    './css/ai-recommendations.css'
+];
+$pageExtraHead = <<<'HTML'
+<style>
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -265,9 +260,9 @@ if ($showAdminDbPanel) {
             margin: 0;
         }
     </style>
-</head>
-
-<body>
+HTML;
+include __DIR__ . '/includes/page-start.php';
+?>
     <header>
         <nav class="navbar">
             <div class="logo">Luke's House</div>
@@ -390,6 +385,9 @@ if ($showAdminDbPanel) {
             }
         });
     </script>
-</body>
+<?php include __DIR__ . '/includes/page-end.php'; ?>
 
-</html>
+
+
+
+

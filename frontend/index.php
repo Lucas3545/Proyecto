@@ -1,41 +1,16 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/includes/user-context.php';
 
-$displayName = '';
-$email = '';
+$pageTitle = "Luke's House Casa Tranquila";
+$pageStyles = [
+    'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
+    './css/estilos-index.css',
+    './css/ai-chatbot.css',
+    './css/ai-recommendations.css',
+];
 
-if (!empty($_COOKIE['lh_user'])) {
-    $displayName = trim((string) $_COOKIE['lh_user']);
-} elseif (!empty($_SESSION['username'])) {
-    $displayName = trim((string) $_SESSION['username']);
-}
-
-if (!empty($_COOKIE['lh_email'])) {
-    $email = trim((string) $_COOKIE['lh_email']);
-} elseif (!empty($_SESSION['user_email'])) {
-    $email = trim((string) $_SESSION['user_email']);
-}
-
-$isLoggedIn = $displayName !== '';
-$userKeySource = $email !== '' ? $email : $displayName;
-$userKey = trim((string) preg_replace('/[^a-z0-9]+/i', '_', strtolower($userKeySource)), '_');
+include __DIR__ . '/includes/page-start.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Luke's House Casa Tranquila</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
-    <link rel="stylesheet" href="./css/estilos-index.css">
-    <link rel="stylesheet" href="./css/ai-chatbot.css">
-    <link rel="stylesheet" href="./css/ai-recommendations.css">
-    <link type="image/webp" rel="icon" href="./img/logo-de-lukes-house-casa-tranquila.webp">
-</head>
-
-<body>
     <header>
         <section>
             <button class="btn-reserve" onclick="location.href='calendario.php'"><strong>Reservar
@@ -124,7 +99,5 @@ $userKey = trim((string) preg_replace('/[^a-z0-9]+/i', '_', strtolower($userKeyS
     <script src="./js/ai-recommendations.js"></script>
     <script src="./js/ai-config.js"></script>
     <script src="./js/index.js"></script>
-</body>
-
-</html>
+<?php include __DIR__ . '/includes/page-end.php'; ?>
 

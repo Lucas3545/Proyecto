@@ -1,16 +1,12 @@
-<?php
+﻿<?php
     include 'includes/procesar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/formulario.css">
-  <title>Formulario Dinámico</title>
-</head>
-<body>
+<?php
+$pageTitle = 'Formulario DinÃ¡mico';
+$pageStyles = ['./css/formulario.css'];
+include __DIR__ . '/includes/page-start.php';
+?>
   <div class="form-box">
     <h2>Formulario</h2>
     <form method="post" action="includes/procesar.php">
@@ -32,8 +28,7 @@
       <button type="submit" class="submit-btn">Enviar</button>
     </form>
   </div>
-</body>
-</html>
+<?php include __DIR__ . '/includes/page-end.php'; ?>
 
 <?php if (isset($_GET['mensaje'])){ ?>
     <div style="color: green; font-weight: bold;">
@@ -41,3 +36,7 @@
     </div>
 <?php } 
 ?>
+
+
+
+

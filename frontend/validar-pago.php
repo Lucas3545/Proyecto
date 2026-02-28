@@ -1,20 +1,16 @@
-<?php 
+﻿<?php 
   include __DIR__ . '/includes/config.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/pago.css">
-  <title>Tarjeta de Crédito</title>
-</head>
-<body>
+<?php
+$pageTitle = 'Tarjeta de CrÃ©dito';
+$pageStyles = ['./css/pago.css'];
+include __DIR__ . '/includes/page-start.php';
+?>
   <div class="card-form">
     <h2>Datos de Tarjeta</h2>
     <form method="post" action="procesar-tarjeta.php">
-      <label for="numero">Número de Tarjeta</label>
+      <label for="numero">NÃºmero de Tarjeta</label>
       <input type="text" id="numero" name="numero" value="<?php $numero ?>">
 
       <label for="nombre">Nombre del Titular</label>
@@ -35,5 +31,9 @@
       <button type="submit" class="submit-btn">Enviar</button>
     </form>
   </div>
-</body>
-</html>
+<?php include __DIR__ . '/includes/page-end.php'; ?>
+
+
+
+
+
