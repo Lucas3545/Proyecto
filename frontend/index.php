@@ -65,7 +65,7 @@ include __DIR__ . '/includes/page-start.php';
             </div>
             <div class="info-card">
                 <div class="info-title">Cerro Chato</div>
-                <article class="info-desc">SumÃ©rgete en la diversidad de flora y fauna explorando el volcÃ¡n y sus
+                <article class="info-desc">Sumergete en la diversidad de flora y fauna explorando el volcÃ¡n y sus
                     tesoros ocultos.</article>
             </div>
             <div class="info-card">
@@ -76,7 +76,7 @@ include __DIR__ . '/includes/page-start.php';
             <div class="info-card">
                 <div class="info-title">Parque Nacional Manuel Antonio</div>
                 <article class="info-desc">Disfruta de playas paradisi­acas y una rica biodiversidad en uno de los
-                    parques mÃ¡s visitados.</article>
+                    parques mas visitados.</article>
             </div>
         </section>
 

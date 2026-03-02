@@ -1,6 +1,6 @@
 ﻿<?php
 $pageLang = 'en';
-$pageTitle = 'TÃ©rminos y Condiciones';
+$pageTitle = 'Terminos y Condiciones';
 $pageStyles = ['./css/estilos-terminos.css'];
 include __DIR__ . '/includes/page-start.php';
 ?>

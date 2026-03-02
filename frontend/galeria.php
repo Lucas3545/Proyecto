@@ -1,10 +1,10 @@
 ﻿<?php
-$pageTitle = 'GalerÃ­a';
+$pageTitle = 'Galeri­a';
 $pageStyles = ['./css/estilos-galeria.css'];
 include __DIR__ . '/includes/page-start.php';
 ?>
     <header>
-        <h1>GalerÃ­a</h1>
+        <h1>Galeri­a</h1>
     </header>
     <main>
         <div class="header">

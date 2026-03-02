@@ -2,6 +2,110 @@
 require_once __DIR__ . '/admin-common.php';
 
 $isOwner = admin_is_owner();
+$actionMessage = null;
+$actionError = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    admin_require_owner();
+    $action = trim((string) $_POST['action']);
+
+    try {
+        $conn = admin_db_connect();
+
+        switch ($action) {
+        case 'delete_user':
+            $usersTable = admin_first_table($conn, ['users']);
+            if ($usersTable === null) {
+                throw new RuntimeException('No existe la tabla users.');
+            }
+
+            $hasId = admin_has_column($conn, $usersTable, 'id');
+            $hasEmail = admin_has_column($conn, $usersTable, 'email');
+            $userId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+            $email = trim((string) ($_POST['email'] ?? ''));
+
+            if ($hasEmail && $email !== '' && strcasecmp($email, admin_owner_email()) === 0) {
+                throw new RuntimeException('No se puede eliminar el usuario propietario.');
+            }
+
+            if ($hasId && $userId > 0) {
+                $stmt = $conn->prepare("DELETE FROM `{$usersTable}` WHERE id = ? LIMIT 1");
+                if (!$stmt) {
+                    throw new RuntimeException('Error al preparar eliminacion de usuario: ' . $conn->error);
+                }
+                $stmt->bind_param('i', $userId);
+            } elseif ($hasEmail && $email !== '') {
+                $stmt = $conn->prepare("DELETE FROM `{$usersTable}` WHERE email = ? LIMIT 1");
+                if (!$stmt) {
+                    throw new RuntimeException('Error al preparar eliminacion de usuario: ' . $conn->error);
+                }
+                $stmt->bind_param('s', $email);
+            } else {
+                throw new RuntimeException('No se pudo identificar al usuario a eliminar.');
+            }
+
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                $actionMessage = 'Usuario eliminado con exito.';
+            } else {
+                $actionError = 'No se encontro el usuario para eliminar.';
+            }
+            $stmt->close();
+            break;
+        case 'delete_reservation':
+            $reservationsTable = admin_first_table($conn, ['reservations', 'reservas']);
+            if ($reservationsTable === null) {
+                throw new RuntimeException('No existe la tabla de reservas.');
+            }
+
+            $hasId = admin_has_column($conn, $reservationsTable, 'id');
+            $hasFecha = admin_has_column($conn, $reservationsTable, 'fecha');
+            $hasEmail = admin_has_column($conn, $reservationsTable, 'email');
+            $reservationId = isset($_POST['reservation_id']) ? (int) $_POST['reservation_id'] : 0;
+            $fecha = trim((string) ($_POST['fecha'] ?? ''));
+            $email = trim((string) ($_POST['email'] ?? ''));
+
+            if ($hasId && $reservationId > 0) {
+                $stmt = $conn->prepare("DELETE FROM `{$reservationsTable}` WHERE id = ? LIMIT 1");
+                if (!$stmt) {
+                    throw new RuntimeException('Error al preparar eliminacion de reserva: ' . $conn->error);
+                }
+                $stmt->bind_param('i', $reservationId);
+            } elseif ($hasFecha && $fecha !== '') {
+                if ($hasEmail && $email !== '') {
+                    $stmt = $conn->prepare("DELETE FROM `{$reservationsTable}` WHERE fecha = ? AND email = ? LIMIT 1");
+                    if (!$stmt) {
+                        throw new RuntimeException('Error al preparar eliminacion de reserva: ' . $conn->error);
+                    }
+                    $stmt->bind_param('ss', $fecha, $email);
+                } else {
+                    $stmt = $conn->prepare("DELETE FROM `{$reservationsTable}` WHERE fecha = ? LIMIT 1");
+                    if (!$stmt) {
+                        throw new RuntimeException('Error al preparar eliminacion de reserva: ' . $conn->error);
+                    }
+                    $stmt->bind_param('s', $fecha);
+                }
+            } else {
+                throw new RuntimeException('No se pudo identificar la reserva a eliminar.');
+            }
+
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                $actionMessage = 'Reserva eliminada con exito.';
+            } else {
+                $actionError = 'No se encontro la reserva para eliminar.';
+            }
+            $stmt->close();
+            break;
+        default:
+            throw new RuntimeException('Accion no valida.');
+        }
+
+        $conn->close();
+    } catch (Throwable $e) {
+        $actionError = $e->getMessage();
+    }
+}
 
 function panel_admin_get_stats() {
     $stats = [
@@ -24,6 +128,15 @@ function panel_admin_get_stats() {
     ];
 
     $warnings = [];
+    $meta = [
+        'can_delete_users' => false,
+        'can_delete_reservations' => false,
+        'users_has_id' => false,
+        'users_has_email' => false,
+        'reservations_has_id' => false,
+        'reservations_has_email' => false,
+        'reservations_has_fecha' => false,
+    ];
 
     $conn = admin_db_connect();
 
@@ -76,6 +189,10 @@ function panel_admin_get_stats() {
     }
 
     if ($usersTable !== null) {
+        $meta['can_delete_users'] = true;
+        $meta['users_has_id'] = admin_has_column($conn, $usersTable, 'id');
+        $meta['users_has_email'] = admin_has_column($conn, $usersTable, 'email');
+
         $usersTotalResult = $conn->query("SELECT COUNT(*) AS total FROM `{$usersTable}`");
         if ($usersTotalResult && ($row = $usersTotalResult->fetch_assoc())) {
             $stats['registrations_total'] = (int) ($row['total'] ?? 0);
@@ -92,8 +209,17 @@ function panel_admin_get_stats() {
                 $stats['registrations_today'] = (int) ($row['total'] ?? 0);
             }
 
+            $userSelectParts = [];
+            if ($meta['users_has_id']) {
+                $userSelectParts[] = 'id';
+            }
+            $userSelectParts[] = admin_has_column($conn, $usersTable, 'email') ? 'email' : "'' AS email";
+            $userSelectParts[] = admin_has_column($conn, $usersTable, 'username') ? 'username' : "'' AS username";
+            $userSelectParts[] = admin_has_column($conn, $usersTable, 'fullname') ? 'fullname' : "'' AS fullname";
+            $userSelectParts[] = 'created_at';
+
             $latestUsersResult = $conn->query("
-                SELECT email, username, fullname, created_at
+                SELECT " . implode(', ', $userSelectParts) . "
                 FROM `{$usersTable}`
                 ORDER BY created_at DESC
                 LIMIT 5
@@ -135,6 +261,11 @@ function panel_admin_get_stats() {
     }
 
     if ($reservationsTable !== null) {
+        $meta['can_delete_reservations'] = true;
+        $meta['reservations_has_id'] = admin_has_column($conn, $reservationsTable, 'id');
+        $meta['reservations_has_email'] = admin_has_column($conn, $reservationsTable, 'email');
+        $meta['reservations_has_fecha'] = admin_has_column($conn, $reservationsTable, 'fecha');
+
         $reservationsTotalResult = $conn->query("SELECT COUNT(*) AS total FROM `{$reservationsTable}`");
         if ($reservationsTotalResult && ($row = $reservationsTotalResult->fetch_assoc())) {
             $stats['reservations_total'] = (int) ($row['total'] ?? 0);
@@ -160,8 +291,22 @@ function panel_admin_get_stats() {
             }
         }
 
+        $reservationSelect = [];
+        if ($meta['reservations_has_id']) {
+            $reservationSelect[] = 'id';
+        }
+        $reservationSelect[] = 'nombre';
+        $reservationSelect[] = 'email';
+        $reservationSelect[] = 'fecha';
+        if (admin_has_column($conn, $reservationsTable, 'estado')) {
+            $reservationSelect[] = 'estado';
+        } else {
+            $reservationSelect[] = "'' AS estado";
+        }
+        $reservationSelect[] = 'fecha_registro';
+
         $latestReservationsResult = $conn->query("
-            SELECT nombre, email, fecha, estado, fecha_registro
+            SELECT " . implode(', ', $reservationSelect) . "
             FROM `{$reservationsTable}`
             ORDER BY fecha_registro DESC
             LIMIT 5
@@ -173,8 +318,17 @@ function panel_admin_get_stats() {
         }
 
         if (admin_has_column($conn, $reservationsTable, 'estado')) {
+            $cancellationsSelect = [];
+            if ($meta['reservations_has_id']) {
+                $cancellationsSelect[] = 'id';
+            }
+            $cancellationsSelect[] = 'nombre';
+            $cancellationsSelect[] = 'email';
+            $cancellationsSelect[] = 'fecha';
+            $cancellationsSelect[] = 'fecha_registro';
+
             $latestCancellationsResult = $conn->query("
-                SELECT nombre, email, fecha, fecha_registro
+                SELECT " . implode(', ', $cancellationsSelect) . "
                 FROM `{$reservationsTable}`
                 WHERE estado='cancelada'
                 ORDER BY fecha_registro DESC
@@ -211,6 +365,7 @@ function panel_admin_get_stats() {
         'stats' => $stats,
         'lists' => $lists,
         'warnings' => $warnings,
+        'meta' => $meta,
     ];
 }
 
@@ -253,6 +408,15 @@ $lists = [
     'latest_cancellations' => [],
 ];
 $dbWarnings = [];
+$meta = [
+    'can_delete_users' => false,
+    'can_delete_reservations' => false,
+    'users_has_id' => false,
+    'users_has_email' => false,
+    'reservations_has_id' => false,
+    'reservations_has_email' => false,
+    'reservations_has_fecha' => false,
+];
 
 if ($isOwner) {
     try {
@@ -260,6 +424,7 @@ if ($isOwner) {
         $stats = $payload['stats'] ?? $stats;
         $lists = $payload['lists'] ?? $lists;
         $dbWarnings = $payload['warnings'] ?? [];
+        $meta = $payload['meta'] ?? $meta;
     } catch (Throwable $e) {
         $statsError = $e->getMessage();
     }
@@ -354,6 +519,23 @@ $pageExtraHead = <<<'HTML'
     padding: 0.8rem;
     margin-bottom: 1rem;
   }
+  .alert.ok {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+  }
+  .btn-danger {
+    background: #ef4444;
+    border: none;
+    color: #fff;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .btn-danger:hover {
+    background: #dc2626;
+  }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -410,6 +592,14 @@ include __DIR__ . '/includes/page-start.php';
     <div class="alert"><?php echo h(implode(' ', $dbWarnings)); ?></div>
   <?php endif; ?>
 
+  <?php if ($actionMessage !== null): ?>
+    <div class="alert ok"><?php echo h($actionMessage); ?></div>
+  <?php endif; ?>
+
+  <?php if ($actionError !== null): ?>
+    <div class="alert"><?php echo h($actionError); ?></div>
+  <?php endif; ?>
+
   <section class="card">
     <h2>Resumen en tiempo real</h2>
     <div class="grid" id="stats-grid">
@@ -461,11 +651,14 @@ include __DIR__ . '/includes/page-start.php';
           <th>Usuario</th>
           <th>Nombre</th>
           <th>Fecha</th>
+          <?php if ($isOwner && $meta['can_delete_users']): ?>
+            <th>Acciones</th>
+          <?php endif; ?>
         </tr>
       </thead>
       <tbody>
         <?php if (count($lists['latest_registrations']) === 0): ?>
-          <tr><td colspan="4">Sin registros recientes.</td></tr>
+          <tr><td colspan="<?php echo $isOwner && $meta['can_delete_users'] ? 5 : 4; ?>">Sin registros recientes.</td></tr>
         <?php else: ?>
           <?php foreach ($lists['latest_registrations'] as $row): ?>
             <tr>
@@ -473,6 +666,20 @@ include __DIR__ . '/includes/page-start.php';
               <td><?php echo h($row['username'] ?? ''); ?></td>
               <td><?php echo h($row['fullname'] ?? ''); ?></td>
               <td><?php echo h($row['created_at'] ?? ''); ?></td>
+              <?php if ($isOwner && $meta['can_delete_users']): ?>
+                <td>
+                  <?php if (!empty($row['id']) || !empty($row['email'])): ?>
+                    <form method="post" onsubmit="return confirm('¿Eliminar este usuario? Esta accion no se puede deshacer.');">
+                      <input type="hidden" name="action" value="delete_user" />
+                      <input type="hidden" name="user_id" value="<?php echo (int) ($row['id'] ?? 0); ?>" />
+                      <input type="hidden" name="email" value="<?php echo h($row['email'] ?? ''); ?>" />
+                      <button class="btn-danger" type="submit">Eliminar</button>
+                    </form>
+                  <?php else: ?>
+                    -
+                  <?php endif; ?>
+                </td>
+              <?php endif; ?>
             </tr>
           <?php endforeach; ?>
         <?php endif; ?>
@@ -518,11 +725,14 @@ include __DIR__ . '/includes/page-start.php';
           <th>Fecha</th>
           <th>Estado</th>
           <th>Registro</th>
+          <?php if ($isOwner && $meta['can_delete_reservations']): ?>
+            <th>Acciones</th>
+          <?php endif; ?>
         </tr>
       </thead>
       <tbody>
         <?php if (count($lists['latest_reservations']) === 0): ?>
-          <tr><td colspan="5">Sin reservas recientes.</td></tr>
+          <tr><td colspan="<?php echo $isOwner && $meta['can_delete_reservations'] ? 6 : 5; ?>">Sin reservas recientes.</td></tr>
         <?php else: ?>
           <?php foreach ($lists['latest_reservations'] as $row): ?>
             <tr>
@@ -531,6 +741,21 @@ include __DIR__ . '/includes/page-start.php';
               <td><?php echo h($row['fecha'] ?? ''); ?></td>
               <td><?php echo h($row['estado'] ?? ''); ?></td>
               <td><?php echo h($row['fecha_registro'] ?? ''); ?></td>
+              <?php if ($isOwner && $meta['can_delete_reservations']): ?>
+                <td>
+                  <?php if (!empty($row['id']) || !empty($row['fecha'])): ?>
+                    <form method="post" onsubmit="return confirm('¿Eliminar esta reserva? Esta accion no se puede deshacer.');">
+                      <input type="hidden" name="action" value="delete_reservation" />
+                      <input type="hidden" name="reservation_id" value="<?php echo (int) ($row['id'] ?? 0); ?>" />
+                      <input type="hidden" name="fecha" value="<?php echo h($row['fecha'] ?? ''); ?>" />
+                      <input type="hidden" name="email" value="<?php echo h($row['email'] ?? ''); ?>" />
+                      <button class="btn-danger" type="submit">Eliminar</button>
+                    </form>
+                  <?php else: ?>
+                    -
+                  <?php endif; ?>
+                </td>
+              <?php endif; ?>
             </tr>
           <?php endforeach; ?>
         <?php endif; ?>
@@ -547,11 +772,14 @@ include __DIR__ . '/includes/page-start.php';
           <th>Email</th>
           <th>Fecha</th>
           <th>Registro</th>
+          <?php if ($isOwner && $meta['can_delete_reservations']): ?>
+            <th>Acciones</th>
+          <?php endif; ?>
         </tr>
       </thead>
       <tbody>
         <?php if (count($lists['latest_cancellations']) === 0): ?>
-          <tr><td colspan="4">Sin cancelaciones recientes.</td></tr>
+          <tr><td colspan="<?php echo $isOwner && $meta['can_delete_reservations'] ? 5 : 4; ?>">Sin cancelaciones recientes.</td></tr>
         <?php else: ?>
           <?php foreach ($lists['latest_cancellations'] as $row): ?>
             <tr>
@@ -559,6 +787,21 @@ include __DIR__ . '/includes/page-start.php';
               <td><?php echo h($row['email'] ?? ''); ?></td>
               <td><?php echo h($row['fecha'] ?? ''); ?></td>
               <td><?php echo h($row['fecha_registro'] ?? ''); ?></td>
+              <?php if ($isOwner && $meta['can_delete_reservations']): ?>
+                <td>
+                  <?php if (!empty($row['id']) || !empty($row['fecha'])): ?>
+                    <form method="post" onsubmit="return confirm('¿Eliminar esta reserva? Esta accion no se puede deshacer.');">
+                      <input type="hidden" name="action" value="delete_reservation" />
+                      <input type="hidden" name="reservation_id" value="<?php echo (int) ($row['id'] ?? 0); ?>" />
+                      <input type="hidden" name="fecha" value="<?php echo h($row['fecha'] ?? ''); ?>" />
+                      <input type="hidden" name="email" value="<?php echo h($row['email'] ?? ''); ?>" />
+                      <button class="btn-danger" type="submit">Eliminar</button>
+                    </form>
+                  <?php else: ?>
+                    -
+                  <?php endif; ?>
+                </td>
+              <?php endif; ?>
             </tr>
           <?php endforeach; ?>
         <?php endif; ?>
@@ -571,6 +814,8 @@ include __DIR__ . '/includes/page-start.php';
   <script>
     (function () {
       var refreshMs = 5000;
+      var canDeleteUsers = <?php echo $meta['can_delete_users'] ? 'true' : 'false'; ?>;
+      var canDeleteReservations = <?php echo $meta['can_delete_reservations'] ? 'true' : 'false'; ?>;
       var endpoints = {
         activeUsers: document.getElementById('stat-active-users'),
         registrationsTotal: document.getElementById('stat-registrations-total'),
@@ -587,6 +832,15 @@ include __DIR__ . '/includes/page-start.php';
         cancellationsTable: document.querySelector('#table-cancellations tbody')
       };
 
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
       function renderRows(rows, cols) {
         if (!rows || rows.length === 0) {
           return '<tr><td colspan="' + cols + '">Sin datos recientes.</td></tr>';
@@ -595,6 +849,81 @@ include __DIR__ . '/includes/page-start.php';
           return '<tr>' + row.map(function (cell) {
             return '<td>' + (cell || '') + '</td>';
           }).join('') + '</tr>';
+        }).join('');
+      }
+
+      function renderRegistrations(rows) {
+        if (!rows || rows.length === 0) {
+          return '<tr><td colspan="' + (canDeleteUsers ? 5 : 4) + '">Sin registros recientes.</td></tr>';
+        }
+
+        return rows.map(function (row) {
+          var email = escapeHtml(row.email || '');
+          var username = escapeHtml(row.username || '');
+          var fullname = escapeHtml(row.fullname || '');
+          var createdAt = escapeHtml(row.created_at || '');
+          var userId = Number(row.id || 0);
+          var actionCell = '';
+
+          if (canDeleteUsers) {
+            if (userId > 0 || email !== '') {
+              actionCell = '<td><form method="post" onsubmit="return confirm(\'¿Eliminar este usuario? Esta accion no se puede deshacer.\');">'
+                + '<input type="hidden" name="action" value="delete_user" />'
+                + '<input type="hidden" name="user_id" value="' + userId + '" />'
+                + '<input type="hidden" name="email" value="' + email + '" />'
+                + '<button class="btn-danger" type="submit">Eliminar</button>'
+                + '</form></td>';
+            } else {
+              actionCell = '<td>-</td>';
+            }
+          }
+
+          return '<tr>'
+            + '<td>' + email + '</td>'
+            + '<td>' + username + '</td>'
+            + '<td>' + fullname + '</td>'
+            + '<td>' + createdAt + '</td>'
+            + (canDeleteUsers ? actionCell : '')
+            + '</tr>';
+        }).join('');
+      }
+
+      function renderReservations(rows, includeEstado) {
+        if (!rows || rows.length === 0) {
+          return '<tr><td colspan="' + (canDeleteReservations ? (includeEstado ? 6 : 5) : (includeEstado ? 5 : 4)) + '">Sin reservas recientes.</td></tr>';
+        }
+
+        return rows.map(function (row) {
+          var nombre = escapeHtml(row.nombre || '');
+          var email = escapeHtml(row.email || '');
+          var fecha = escapeHtml(row.fecha || '');
+          var estado = escapeHtml(row.estado || '');
+          var registro = escapeHtml(row.fecha_registro || '');
+          var reservationId = Number(row.id || 0);
+          var actionCell = '';
+
+          if (canDeleteReservations) {
+            if (reservationId > 0 || fecha !== '') {
+              actionCell = '<td><form method="post" onsubmit="return confirm(\'¿Eliminar esta reserva? Esta accion no se puede deshacer.\');">'
+                + '<input type="hidden" name="action" value="delete_reservation" />'
+                + '<input type="hidden" name="reservation_id" value="' + reservationId + '" />'
+                + '<input type="hidden" name="fecha" value="' + fecha + '" />'
+                + '<input type="hidden" name="email" value="' + email + '" />'
+                + '<button class="btn-danger" type="submit">Eliminar</button>'
+                + '</form></td>';
+            } else {
+              actionCell = '<td>-</td>';
+            }
+          }
+
+          return '<tr>'
+            + '<td>' + nombre + '</td>'
+            + '<td>' + email + '</td>'
+            + '<td>' + fecha + '</td>'
+            + (includeEstado ? '<td>' + estado + '</td>' : '')
+            + '<td>' + registro + '</td>'
+            + (canDeleteReservations ? actionCell : '')
+            + '</tr>';
         }).join('');
       }
 
@@ -619,30 +948,15 @@ include __DIR__ . '/includes/page-start.php';
           endpoints.validationsTotal.textContent = Number(stats.validations_total || 0);
 
           var lists = data.lists || {};
-          endpoints.registrationsTable.innerHTML = renderRows(
-            (lists.latest_registrations || []).map(function (row) {
-              return [row.email, row.username, row.fullname, row.created_at];
-            }),
-            4
-          );
+          endpoints.registrationsTable.innerHTML = renderRegistrations(lists.latest_registrations || []);
           endpoints.loginsTable.innerHTML = renderRows(
             (lists.latest_logins || []).map(function (row) {
-              return [row.email, row.username, row.resultado, row.created_at];
+              return [escapeHtml(row.email), escapeHtml(row.username), escapeHtml(row.resultado), escapeHtml(row.created_at)];
             }),
             4
           );
-          endpoints.reservationsTable.innerHTML = renderRows(
-            (lists.latest_reservations || []).map(function (row) {
-              return [row.nombre, row.email, row.fecha, row.estado, row.fecha_registro];
-            }),
-            5
-          );
-          endpoints.cancellationsTable.innerHTML = renderRows(
-            (lists.latest_cancellations || []).map(function (row) {
-              return [row.nombre, row.email, row.fecha, row.fecha_registro];
-            }),
-            4
-          );
+          endpoints.reservationsTable.innerHTML = renderReservations(lists.latest_reservations || [], true);
+          endpoints.cancellationsTable.innerHTML = renderReservations(lists.latest_cancellations || [], false);
         } catch (err) {
           console.error(err);
         }
